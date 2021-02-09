@@ -1,35 +1,6 @@
 const Nomad = require("../models/Nomad");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const expressJwt = require("express-jwt");
-
-// Check for existing emails
-const checkEmail = (req, res, next) => {
-  const { email } = req.body;
-  Nomad.findOne({ email })
-    .then((user) => {
-      if (user)
-        return res
-          .status(400)
-          .json({ msg: "User with this email already exists" });
-      next();
-    })
-    .catch((err) => res.status(400).json(err));
-};
-
-// Check for existing usernames
-const checkUsername = (req, res, next) => {
-  const { username } = req.body;
-  Nomad.findOne({ username })
-    .then((user) => {
-      if (user)
-        return res
-          .status(400)
-          .json({ msg: "User with this username already exists" });
-      next();
-    })
-    .catch((err) => res.status(400).json(err));
-};
 
 // Signup a user
 const signup = (req, res) => {
@@ -105,35 +76,8 @@ const signout = (req, res) => {
   });
 };
 
-/* Protected routes */
-
-// Saving and signin to auth object in req
-const isSignedIn = expressJwt({
-  secret: process.env.SECRET,
-  userProperty: "auth",
-});
-
-/* Custom middleware */
-
-// check whether the user is authenticated or not
-const isAuthenticated = (req, res, next) => {
-  // check the profile id which sent from the backend is equivalant with the id wich saved by isSignedIn
-  let owner = req.profile && req.auth && req.profile._id === req.auth._id;
-
-  if (!owner) {
-    return res.status(403).json({
-      error: "ACCESS DENIED!",
-    });
-  }
-  next();
-};
-
 module.exports = {
-  checkEmail,
-  checkUsername,
   signup,
   signin,
   signout,
-  isSignedIn,
-  isAuthenticated,
 };
