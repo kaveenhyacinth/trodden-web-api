@@ -1,8 +1,8 @@
 const express = require("express");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
-require("dotenv").config({path: "./config/.env"});
+require("dotenv").config({ path: "./config/.env" });
 require("./db/connect");
 
 // Init express app
@@ -22,6 +22,8 @@ app.use("/api/auth", authRoute);
 
 // Server instance
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`⚡ [server] APP IS RUNNING ON PORT ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`⚡ [server] APP IS RUNNING ON PORT ${PORT}`)
+);
 
-module.exports = app  //for testing
+module.exports = app; //for testing
