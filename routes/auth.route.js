@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
-const { signup, signin, signout } = require("../controllers/auth.controller");
+const { signupController, signinController, signoutController } = require("../controllers/auth.controller");
 const { checkEmail, checkUsername } = require("../middlewares/userAvailabilityChecker");
 
 // Signup route
@@ -25,7 +25,7 @@ router.post(
   ],
   checkEmail,
   checkUsername,
-  signup
+  signupController
 );
 
 // Signin route
@@ -37,10 +37,10 @@ router.post(
       .isLength({ min: 6, max: 12 })
       .withMessage("Enter a value between 6 to 12 characters long"),
   ],
-  signin
+  signinController
 );
 
 // Signout route
-router.get("/signout", signout);
+router.get("/signout", signoutController);
 
 module.exports = router;

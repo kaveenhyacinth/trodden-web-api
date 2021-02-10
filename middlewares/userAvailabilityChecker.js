@@ -10,7 +10,7 @@ const checkEmail = (req, res, next) => {
           .json({ msg: "User with this email already exists" });
       next();
     })
-    .catch((err) => res.status(400).json(err));
+    .catch((err) => res.status(500).json(err));
 };
 
 const checkUsername = (req, res, next) => {
@@ -23,7 +23,7 @@ const checkUsername = (req, res, next) => {
           .json({ msg: "User with this username already exists" });
       next();
     })
-    .catch((err) => res.status(400).json(err));
+    .catch((err) => res.status(500).json(err));
 };
 
 module.exports = {
