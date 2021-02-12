@@ -37,7 +37,7 @@ const signin = (payload) => {
 
       const { _id } = nomad;
       // Create the Auth token
-      const token = jwt.sign({ _id }, process.env.SECRET);
+      const token = jwt.sign({ id: _id }, process.env.SECRET);
 
       return {
         msg: "Signin Successful",
@@ -47,7 +47,7 @@ const signin = (payload) => {
     })
     .catch((err) => ({
         msg: "Email is not valid or not a registered user",
-        code: 0,
+        success: false,
         err,
       })
     );

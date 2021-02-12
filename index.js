@@ -16,9 +16,11 @@ app.use(cors());
 
 // Import routes
 const authRoute = require("./routes/auth.route");
+const profileRoute = require("./routes/profile.route");
 
 // Routes
 app.use("/api/auth", authRoute);
+app.use("/api/profile", profileRoute);
 
 // Server instance
 const PORT = process.env.PORT || 5000;

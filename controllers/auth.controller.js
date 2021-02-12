@@ -1,4 +1,3 @@
-const Nomad = require("../models/Nomad");
 const { signup, signin } = require("../services/AuthenticationService");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
