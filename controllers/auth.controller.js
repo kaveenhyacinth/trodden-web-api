@@ -31,7 +31,7 @@ const signinController = async (req, res) => {
     return res
       .status(200)
       .cookie("token", token, { expire: new Date() + 29 })
-      .json({ msg, success });
+      .json({ msg, success, token });
   } catch (error) {
     return res.status(500).json(error);
   }
