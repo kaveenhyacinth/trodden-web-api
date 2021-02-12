@@ -11,7 +11,6 @@ const {
   isSignedIn,
 } = require("../middlewares/authenticationChecker");
 
-router.get("/", getProfileByIdController, getProfileController);
-router.get("/test", (req, res) => res.send("It's working"));
+router.get("/", getProfileByIdController, isSignedIn, isAuthenticated, getProfileController);
 
 module.exports = router;

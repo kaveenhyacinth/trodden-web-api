@@ -39,6 +39,7 @@ const signinController = async (req, res) => {
 // signout
 const signoutController = (req, res) => {
   try {
+    req.profile = undefined;
     return res.clearCookie("token").json({
       msg: "User has signout successfully",
       success: true,

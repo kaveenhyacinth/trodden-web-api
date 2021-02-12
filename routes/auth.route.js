@@ -2,8 +2,19 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
-const { signupController, signinController, signoutController } = require("../controllers/auth.controller");
-const { checkEmail, checkUsername } = require("../middlewares/userAvailabilityChecker");
+const {
+  signupController,
+  signinController,
+  signoutController,
+} = require("../controllers/auth.controller");
+const {
+  checkEmail,
+  checkUsername,
+} = require("../middlewares/userAvailabilityChecker");
+const {
+  isAuthenticated,
+  isSignedIn,
+} = require("../middlewares/authenticationChecker");
 
 // Signup route
 router.post(
