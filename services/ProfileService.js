@@ -1,19 +1,10 @@
 const Nomad = require("../models/Nomad");
-const jwt = require("jsonwebtoken");
 
+const tokenDecoder = require("../middlewares/tokenDecoder");
+
+// find current user proffile by id
 const getProfilebyId = (bearerToken) => {
-  const token = bearerToken.replace("Bearer ", "");
-  console.log("token @extractor: " + token);
-
-  const id = jwt.verify(token, process.env.SECRET, (err, decodedToken) => {
-    // if (err) return { msg: "Incorrect or expired link", success: false, err };
-    if (err) return null;
-
-    console.log("Decoded @ProfileService @getProfilebyId : " + decodedToken.id);
-    return decodedToken.id;
-  });
-
-  // const { id } = decodedToken;
+  const id = tokenDecoder(bearerToken);
   console.log("Id @ProfileService @getProfilebyId : " + id);
 
   return Nomad.findById(id)
@@ -28,6 +19,23 @@ const getProfilebyId = (bearerToken) => {
     }));
 };
 
+// Setup profile info after sign up
+const setupProfile = (id, payload) => {
+  const { bio, occupation, contact, interests } = payload;
+
+  return Nomad.findByIdAndUpdate(
+    id,
+    {
+      $set: { prof_bio: bio, contact, occupation, role: 1 },
+      $addToSet: { interests },
+    },
+    { new: true }
+  )
+    .then((result) => result)
+    .catch((err) => err);
+};
+
 module.exports = {
   getProfilebyId,
+  setupProfile,
 };

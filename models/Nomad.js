@@ -44,6 +44,7 @@ const nomadSchema = new mongoose.Schema(
     },
     prof_img: Buffer,
     contact: String,
+    occupation: String,
     location: {
       type: {
         type: String,

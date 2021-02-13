@@ -16,7 +16,7 @@ const createInterestController = async (req, res) => {
 
 const getInterestsController = async (req, res) => {
   try {
-    const interests =await getInterests();
+    const interests = await getInterests();
     return res
       .status(200)
       .json({ msg: "Got interests", success: true, interests });
