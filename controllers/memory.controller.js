@@ -17,13 +17,7 @@ const getMemoByUserController = (req, res) => {};
  */
 const createMemoController = async (req, res) => {
   try {
-    const token = req.header("Authorization");
-    if (!token)
-      return res.status(400).json({
-        msg: "Your token has expired or invalid",
-        success: false,
-      });
-    const id = tokenDecoder(token);
+    const id = req.owneId;
     const result = await createMemo(id, req.body);
     return res.status(200).json({
       err: result.err,

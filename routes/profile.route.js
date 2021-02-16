@@ -2,17 +2,31 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
+const tokenDecoder = require("../middlewares/tokenDecoder");
 const {
   getProfileByIdController,
   getProfileController,
-  setUpProfileController
+  setUpProfileController,
 } = require("../controllers/profile.controller");
 const {
   isAuthenticated,
   isSignedIn,
 } = require("../middlewares/authenticationChecker");
 
-router.get("/", getProfileByIdController, isSignedIn, isAuthenticated, getProfileController);
-router.put("/setup", getProfileByIdController, isSignedIn, isAuthenticated, setUpProfileController);
+router.get(
+  "/",
+  tokenDecoder,
+  isSignedIn,
+  isAuthenticated,
+  getProfileByIdController,
+  getProfileController
+);
+router.put(
+  "/setup",
+  tokenDecoder,
+  isSignedIn,
+  isAuthenticated,
+  setUpProfileController
+);
 
 module.exports = router;
