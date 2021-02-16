@@ -3,6 +3,10 @@ const { ObjectId } = mongoose.Schema;
 
 const memorySchema = new mongoose.Schema(
   {
+    owner: {
+      type: ObjectId,
+      ref: "Nomad"
+    },
     content: String,
     destination: String,
     tags: [

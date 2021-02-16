@@ -1,12 +1,7 @@
 const Nomad = require("../models/Nomad");
 
-const tokenDecoder = require("../middlewares/tokenDecoder");
-
 // find current user proffile by id
-const getProfilebyId = (bearerToken) => {
-  const id = tokenDecoder(bearerToken);
-  console.log("Id @ProfileService @getProfilebyId : " + id);
-
+const getProfilebyId = (id) => {
   return Nomad.findById(id)
     .then((nomad) => ({
       nomad,

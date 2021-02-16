@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const { getProfilebyId, setupProfile } = require("../services/ProfileService");
+const tokenDecoder = require("../middlewares/tokenDecoder");
 
 // extract token and save current user to req.profile
 const getProfileByIdController = async (req, res, next) => {
@@ -10,7 +11,9 @@ const getProfileByIdController = async (req, res, next) => {
         msg: "Your token has expired or invalid",
         success: false,
       });
-    const result = await getProfilebyId(token);
+    const id = tokenDecoder(token);
+    console.log("Id @ProfileController @getProfilebyId : " + id);
+    const result = await getProfilebyId(id);
     if (result.nomad === null) {
       return res.status(400).json({
         msg: "Couldn't find the user @extractor",

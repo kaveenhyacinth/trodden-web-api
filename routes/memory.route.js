@@ -12,7 +12,7 @@ const {
 router.get("/", getMemosController);
 router.get("/:userId", getMemoByUserController);
 router.post("/post", createMemoController);
-router.put("/update", updateMemoController);
+router.put("/update/:postId", updateMemoController);
 router.delete("/delete", deleteMemoController);
 
 module.exports = router;
