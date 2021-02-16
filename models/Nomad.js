@@ -42,7 +42,10 @@ const nomadSchema = new mongoose.Schema(
       type: String,
       maxlength: 160,
     },
-    prof_img: Buffer,
+    prof_img: {
+      data: Buffer,
+      contentType: String,
+    },
     contact: String,
     occupation: String,
     location: {
@@ -120,9 +123,9 @@ nomadSchema.methods = {
   },
 
   // Authenticate user by password
-  authenticate: function(plainpass) {
+  authenticate: function (plainpass) {
     return this.securePassword(plainpass) === this.encry_password;
-  }
+  },
 };
 
 const Nomad = mongoose.model("Nomad", nomadSchema, "nomads");
