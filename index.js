@@ -17,12 +17,14 @@ app.use(cors());
 // Import routes
 const authRoute = require("./routes/auth.route");
 const profileRoute = require("./routes/profile.route");
-const interestRoute = require("./routes/interest.route")
+const interestRoute = require("./routes/interest.route");
+const memoryRoute = require("./routes/memory.route");
 
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/profile", profileRoute);
 app.use("/api/interests", interestRoute);
+app.use("/api/memories", memoryRoute);
 
 // Server instance
 const PORT = process.env.PORT || 5000;
