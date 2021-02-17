@@ -1,4 +1,3 @@
-const tokenDecoder = require("../middlewares/tokenDecoder");
 const {
   getMemos,
   getMemoByUser,
@@ -7,8 +6,65 @@ const {
   deleteMemo,
 } = require("../services/ContentService");
 
-const getMemosController = (req, res) => {};
-const getMemoByUserController = (req, res) => {};
+/**
+ * @description Get all the memories which belong to the current user
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP response
+ */
+const getMemosController = async (req, res) => {
+  try {
+    const ownerId = req.ownerId;
+    const { result, success } = await getMemos(ownerId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while fetching your memories",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Memories has been fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getMemosController",
+      err: error,
+      success: false,
+    });
+  }
+};
+
+/**
+ * @description Get all the memories which belong to a specific user
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP response
+ */
+const getMemoByUserController = async (req, res) => {
+  try {
+    const userId = req.params["userId"];
+    const { result, success } = await getMemoByUser(userId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while fetching user memories",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Memories has been fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getMemoByUserController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 /**
  * @description Create a new memory
@@ -17,16 +73,23 @@ const getMemoByUserController = (req, res) => {};
  */
 const createMemoController = async (req, res) => {
   try {
-    const id = req.owneId;
-    const result = await createMemo(id, req.body);
+    const ownerId = req.ownerId;
+    const {result, success} = await createMemo(ownerId, req.body);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while creating the memory",
+      });
+    }
     return res.status(200).json({
-      err: result.err,
-      msg: result.msg,
-      success: result.success,
+      result,
+      success,
+      msg: "Memories has been created successfully",
     });
   } catch (error) {
     return res.status(500).json({
-      msg: "Internal server error @extractor",
+      msg: "Internal server error @createMemoController",
       err: error,
       success: false,
     });
@@ -41,16 +104,50 @@ const createMemoController = async (req, res) => {
 const updateMemoController = async (req, res) => {
   try {
     const postId = req.params["postId"];
-    const { result, success } = await updateMemo(postId, req.body);
+    const ownerId = req.ownerId;
+    const { result, success } = await updateMemo(postId, ownerId, req.body);
     if (!success) {
       return res.status(400).json({
         result,
+        success,
         msg: "Something went wrong while updating the memory",
       });
     }
     return res.status(200).json({
       result,
+      success,
       msg: "Memory has been updated",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @updateMemoController",
+      err: error,
+      success: false,
+    });
+  }
+};
+
+/**
+ * @description Delete a created memory details
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP response
+ */
+const deleteMemoController = async (req, res) => {
+  try {
+    const postId = req.params["postId"];
+    const ownerId = req.ownerId;
+    const { result, success } = await deleteMemo(postId, ownerId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while deleting the memory",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Memory has been deleted",
     });
   } catch (error) {
     return res.status(500).json({
@@ -60,8 +157,6 @@ const updateMemoController = async (req, res) => {
     });
   }
 };
-
-const deleteMemoController = (req, res) => {};
 
 module.exports = {
   getMemosController,
