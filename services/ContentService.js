@@ -9,6 +9,7 @@ const getMemos = (ownerId) => {
   return Memory.find({ owner: ownerId })
     .sort({ createdAt: -1 })
     .populate({ path: "owner", select: "first_name last_name" })
+    .populate({ path: "comments.commentor", select: "first_name last_name" })
     .then((memos) => ({ result: memos, success: true }))
     .catch((err) => ({ result: err, success: false }));
 };
@@ -19,6 +20,9 @@ const getMemos = (ownerId) => {
  */
 const getMemoByUser = (userId) => {
   return Memory.find({ owner: userId })
+    .sort({ createdAt: -1 })
+    .populate({ path: "owner", select: "first_name last_name" })
+    .populate({ path: "comments.commentor", select: "first_name last_name" })
     .then((memos) => ({ result: memos, success: true }))
     .catch((err) => ({ result: err, success: false }));
 };
@@ -78,10 +82,30 @@ const deleteMemo = (postId, ownerId) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
+/**
+ * @description Post a new comment on a memorry
+ * @param {ObjectId} commentorId commentor id (current user)
+ * @param {Object} payload request body
+ */
+const commentOnMemo = (commentorId, payload) => {
+  const { postId, content } = payload;
+  const commentor = commentorId;
+  const comments = { commentor, content };
+
+  return Memory.findByIdAndUpdate(
+    postId,
+    { $push: { comments } },
+    { new: true }
+  )
+    .then((memo) => ({ result: memo, success: true }))
+    .catch((err) => ({ result: err, success: false }));
+};
+
 module.exports = {
   getMemos,
   getMemoByUser,
   createMemo,
   updateMemo,
   deleteMemo,
+  commentOnMemo,
 };

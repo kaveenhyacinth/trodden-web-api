@@ -4,6 +4,7 @@ const {
   createMemo,
   updateMemo,
   deleteMemo,
+  commentOnMemo,
 } = require("../services/ContentService");
 
 /**
@@ -74,7 +75,7 @@ const getMemoByUserController = async (req, res) => {
 const createMemoController = async (req, res) => {
   try {
     const ownerId = req.ownerId;
-    const {result, success} = await createMemo(ownerId, req.body);
+    const { result, success } = await createMemo(ownerId, req.body);
     if (!success) {
       return res.status(400).json({
         result,
@@ -158,10 +159,41 @@ const deleteMemoController = async (req, res) => {
   }
 };
 
+/**
+ * @description Post a comment for a specific post
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP response
+ */
+const commentOnMemoController = async (req, res) => {
+  try {
+    const commentorId = req.ownerId;
+    const { result, success } = await commentOnMemo(commentorId, req.body);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while posting the comment",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Comment has been posted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @commentController",
+      err: error,
+      success: false,
+    });
+  }
+};
+
 module.exports = {
   getMemosController,
   getMemoByUserController,
   createMemoController,
   updateMemoController,
   deleteMemoController,
+  commentOnMemoController,
 };

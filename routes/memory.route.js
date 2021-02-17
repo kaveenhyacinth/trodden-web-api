@@ -12,13 +12,14 @@ const {
   createMemoController,
   updateMemoController,
   deleteMemoController,
+  commentOnMemoController,
 } = require("../controllers/memory.controller");
 
 /**
  * @description Get all memories of the signed user : Protected
  * @name get/memories
  */
-router.get("/", getMemosController);
+router.get("/", tokenDecoder, isSignedIn, isAuthenticated, getMemosController);
 
 /**
  * @description Get all memories of a specific user
@@ -49,6 +50,12 @@ router.put(
   isAuthenticated,
   updateMemoController
 );
+
+/**
+ * @description Comment on a memory
+ * @name put/commmentOnMemory
+ */
+router.put("/comment", tokenDecoder, commentOnMemoController);
 
 /**
  * @description delete an existing memory : Protected
