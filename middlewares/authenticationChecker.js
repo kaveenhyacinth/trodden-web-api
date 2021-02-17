@@ -11,7 +11,7 @@ const isSignedIn = expressJwt({
 const isAuthenticated = (req, res, next) => {
   // check the profile id which sent from the backend is equivalant with the id wich saved by isSignedIn
   let owner = req.auth && req.ownerId == req.auth.id;
-  console.debug("owner @isAuthenticated: " + owner);
+  // console.debug("owner @isAuthenticated: " + owner); // <- clg
 
   if (!owner) {
     return res.status(403).json({

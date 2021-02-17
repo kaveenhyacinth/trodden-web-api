@@ -8,18 +8,18 @@ const tokenDecoder = (req, res, next) => {
         success: false,
       });
   const token = bearerToken.replace("Bearer ", "");
-  console.log("token @extractor: " + token);
+  // console.log("token @extractor: " + token); // <- clg
 
   const id = jwt.verify(token, process.env.SECRET, (err, decodedToken) => {
     // if (err) return { msg: "Incorrect or expired link", success: false, err };
     if (err) return null;
 
-    console.log("Decoded @ProfileService @getProfilebyId : " + decodedToken.id);
+    // console.log("Decoded @ProfileService @getProfilebyId : " + decodedToken.id);// <- clg
     return decodedToken.id;
   });
 
   req.ownerId = id;
-  console.log("req.owner @extractor: " + req.ownerId);
+  // console.log("req.owner @extractor: " + req.ownerId); // <- clg
   next();
 };
 

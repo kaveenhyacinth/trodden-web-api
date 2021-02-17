@@ -82,7 +82,7 @@ const createMemoController = async (req, res) => {
         msg: "Something went wrong while creating the memory",
       });
     }
-    return res.status(200).json({
+    return res.status(201).json({
       result,
       success,
       msg: "Memories has been created successfully",

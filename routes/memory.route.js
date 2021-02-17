@@ -18,7 +18,7 @@ const {
  * @description Get all memories of the signed user : Protected
  * @name get/memories
  */
-router.get("/", tokenDecoder, isSignedIn, isAuthenticated, getMemosController);
+router.get("/", getMemosController);
 
 /**
  * @description Get all memories of a specific user
