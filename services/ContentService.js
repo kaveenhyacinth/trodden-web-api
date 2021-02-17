@@ -1,17 +1,36 @@
 const Memory = require("../models/Memory");
 // const Tag = require("../models/Tag");
 
-const getMemos = () => {};
-const getMemoByUser = () => {};
+/**
+ * @description Get memories of the current user
+ * @param {ObjectId} ownerId current signed user
+ */
+const getMemos = (ownerId) => {
+  return Memory.find({ owner: ownerId })
+    .sort({ createdAt: -1 })
+    .populate({ path: "owner", select: "first_name last_name" })
+    .then((memos) => ({ result: memos, success: true }))
+    .catch((err) => ({ result: err, success: false }));
+};
+
+/**
+ * @description Fetch memories by a specific user
+ * @param {ObjectId} userId owner of the memories
+ */
+const getMemoByUser = (userId) => {
+  return Memory.find({ owner: userId })
+    .then((memos) => ({ result: memos, success: true }))
+    .catch((err) => ({ result: err, success: false }));
+};
 
 /**
  * @description Create a new post
- * @param {String} id Cuttent user ID
+ * @param {ObjectId} ownerId Cuttent user ID
  * @param {Object} payload request body
  */
-const createMemo = (id, payload) => {
+const createMemo = (ownerId, payload) => {
   const { content, tags, destination, images } = payload;
-  const owner = id;
+  const owner = ownerId;
 
   const memory = new Memory({
     owner,
@@ -23,24 +42,21 @@ const createMemo = (id, payload) => {
 
   return memory
     .save()
-    .then(() => ({ msg: "Memory has posted", success: true, err: undefined }))
-    .catch((err) => ({
-      err,
-      msg: "Error occured while posting the memory",
-      success: false,
-    }));
+    .then((result) => ({ result, success: true }))
+    .catch((err) => ({ result: err, success: false }));
 };
 
 /**
  * @description Update an existing post
- * @param {String} id Cuttent user ID
+ * @param {ObjectId} postId memory ID
+ * @param {ObjectId} ownerId Cuttent user ID
  * @param {Object} payload request body
  */
-const updateMemo = (id, payload) => {
+const updateMemo = (postId, ownerId, payload) => {
   const { content, tags, destination } = payload;
 
-  return Memory.findByIdAndUpdate(
-    id,
+  return Memory.findOneAndUpdate(
+    { _id: postId, owner: ownerId },
     {
       $set: { content, destination },
       $addToSet: { tags },
@@ -51,7 +67,16 @@ const updateMemo = (id, payload) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
-const deleteMemo = () => {};
+/**
+ * @description Delete a created prost by @param owneerId
+ * @param {ObjectId} postId memory id
+ * @param {ObjectId} ownerId The owner of the memory (signed-in user)
+ */
+const deleteMemo = (postId, ownerId) => {
+  return Memory.findOneAndDelete({ _id: postId, owner: ownerId })
+    .then((result) => ({ result, success: true }))
+    .catch((err) => ({ result: err, success: false }));
+};
 
 module.exports = {
   getMemos,
