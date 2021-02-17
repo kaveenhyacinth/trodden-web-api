@@ -14,8 +14,22 @@ const {
   deleteMemoController,
 } = require("../controllers/memory.controller");
 
-router.get("/", getMemosController);
+/**
+ * @description Get all memories of the signed user : Protected
+ * @name get/memories
+ */
+router.get("/", tokenDecoder, isSignedIn, isAuthenticated, getMemosController);
+
+/**
+ * @description Get all memories of a specific user
+ * @name get/memoriesByUser
+ */
 router.get("/:userId", getMemoByUserController);
+
+/**
+ * @description create a new memory : Protected
+ * @name post/createMemory
+ */
 router.post(
   "/post",
   tokenDecoder,
@@ -23,6 +37,11 @@ router.post(
   isAuthenticated,
   createMemoController
 );
+
+/**
+ * @description update an existing memory : Protected
+ * @name put/updateMemory
+ */
 router.put(
   "/update/:postId",
   tokenDecoder,
@@ -30,6 +49,17 @@ router.put(
   isAuthenticated,
   updateMemoController
 );
-router.delete("/delete", deleteMemoController);
+
+/**
+ * @description delete an existing memory : Protected
+ * @name delete/deleteMemory
+ */
+router.delete(
+  "/:postId",
+  tokenDecoder,
+  isSignedIn,
+  isAuthenticated,
+  deleteMemoController
+);
 
 module.exports = router;
