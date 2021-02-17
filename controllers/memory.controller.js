@@ -5,6 +5,7 @@ const {
   updateMemo,
   deleteMemo,
   commentOnMemo,
+  heatOnMemory,
 } = require("../services/ContentService");
 
 /**
@@ -160,7 +161,7 @@ const deleteMemoController = async (req, res) => {
 };
 
 /**
- * @description Post a comment for a specific post
+ * @description Post a comment for a specific memory
  * @param {Object} req HTTP request
  * @param {Object} res HTTP response
  */
@@ -189,6 +190,36 @@ const commentOnMemoController = async (req, res) => {
   }
 };
 
+/**
+ * @description React for a specific memory
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP response
+ */
+const heatOnMemoryController = async (req, res) => {
+  try {
+    const heaterId = req.ownerId;
+    const { result, success } = await heatOnMemory(heaterId, req.body);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong whilereacting the memory",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Reaction has been posted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @commentController",
+      err: error,
+      success: false,
+    });
+  }
+};
+
 module.exports = {
   getMemosController,
   getMemoByUserController,
@@ -196,4 +227,5 @@ module.exports = {
   updateMemoController,
   deleteMemoController,
   commentOnMemoController,
+  heatOnMemoryController,
 };

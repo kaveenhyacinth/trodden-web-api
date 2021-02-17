@@ -101,6 +101,33 @@ const commentOnMemo = (commentorId, payload) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
+/**
+ * @description React on a specific memory
+ * @param {ObjectId} heaterId Reactor id (current user)
+ * @param {*} payload Request body
+ */
+const heatOnMemory = (heaterId, payload) => {
+  const { postId, reacted } = payload;
+
+  if (reacted) {
+    return Memory.findByIdAndUpdate(
+      postId,
+      { $pull: { heats: heaterId } },
+      { new: true }
+    )
+      .then((memo) => ({ result: memo, success: true }))
+      .catch((err) => ({ result: err, success: false }));
+  }
+
+  return Memory.findByIdAndUpdate(
+    postId,
+    { $push: { heats: heaterId } },
+    { new: true }
+  )
+    .then((memo) => ({ result: memo, success: true }))
+    .catch((err) => ({ result: err, success: false }));
+};
+
 module.exports = {
   getMemos,
   getMemoByUser,
@@ -108,4 +135,5 @@ module.exports = {
   updateMemo,
   deleteMemo,
   commentOnMemo,
+  heatOnMemory
 };

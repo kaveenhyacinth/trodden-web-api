@@ -13,6 +13,7 @@ const {
   updateMemoController,
   deleteMemoController,
   commentOnMemoController,
+  heatOnMemoryController,
 } = require("../controllers/memory.controller");
 
 /**
@@ -56,6 +57,12 @@ router.put(
  * @name put/commmentOnMemory
  */
 router.put("/comment", tokenDecoder, commentOnMemoController);
+
+/**
+ * @description React on a memory
+ * @name patch/commmentOnMemory
+ */
+router.patch("/heat", tokenDecoder, heatOnMemoryController);
 
 /**
  * @description delete an existing memory : Protected
