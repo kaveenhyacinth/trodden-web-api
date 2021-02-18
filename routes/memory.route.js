@@ -14,7 +14,6 @@ const {
   deleteMemoController,
   commentOnMemoController,
   heatOnMemoryController,
-  checkAndCreateHashtagsController
 } = require("../controllers/memory.controller");
 
 /**
@@ -28,8 +27,6 @@ router.get("/", tokenDecoder, isSignedIn, isAuthenticated, getMemosController);
  * @name get/memoriesByUser
  */
 router.get("/:userId", getMemoByUserController);
-
-router.post("/tags", checkAndCreateHashtagsController);
 
 /**
  * @description create a new memory : Protected

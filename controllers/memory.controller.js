@@ -6,7 +6,6 @@ const {
   deleteMemo,
   commentOnMemo,
   heatOnMemory,
-  checkAndCreateHashtags
 } = require("../services/ContentService");
 
 /**
@@ -68,24 +67,6 @@ const getMemoByUserController = async (req, res) => {
     });
   }
 };
-
-const checkAndCreateHashtagsController = (req, res) => {
-  try {
-    const {content} = req.body;
-    const result = checkAndCreateHashtags(content);
-    // checkAndCreateHashtags(content);
-    return res.status(200).json({
-      msg: "Checking tags",
-      result
-    });
-  } catch (error) {
-    return res.status(500).json({
-      msg: "Internal server error @checkAndCreateHashtagsController",
-      err: error,
-      success: false,
-    }); 
-  }
-}
 
 /**
  * @description Create a new memory
@@ -247,5 +228,4 @@ module.exports = {
   deleteMemoController,
   commentOnMemoController,
   heatOnMemoryController,
-  checkAndCreateHashtagsController
 };

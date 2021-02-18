@@ -29,26 +29,30 @@ const getMemoByUser = (userId) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
+/**
+ * @description Check hashtags and create only if hashtags are unvailable
+ * @param {String} content Content of the memory
+ * @inner
+ */
 const checkAndCreateHashtags = (content) => {
   // extracts hashtags in the content
   const regexp = /(^|\s)#[a-zA-Z0-9][\w-]*\b/g;
   const result = content.match(regexp);
 
   if (!result) {
-    console.log("No hashtags found in @checkAndCreateHashtags"); // <- clg
-    // return ["-1"];
+    return [];
   }
 
-  // TODO: Remove repeated tags
-  const tags = result.map((text) => text.trim());
-  // console.log("Extracted Hashtag @checkAndCreateHashtags" + tags); // <- clg
-  // return tags;
+  /* Remove repeated tags using Set() | ref => https://www.javascripttutorial.net/array/javascript-remove-duplicates-from-array/ */
+  const trimmedTags = result.map((text) => text.toLowerCase().trim());
+  const tags = [...new Set(trimmedTags)];
 
   // check their availability in the db
   tags.map((tagString) => {
     Tag.findOne({ tag_name: tagString }).then((res) => {
       if (res) return [];
 
+      // store unavailable hashtags in the db
       const tag = new Tag({ tag_name: tagString });
       tag
         .save()
@@ -58,11 +62,8 @@ const checkAndCreateHashtags = (content) => {
   });
 
   return tags;
-
-  // store unavailable hashtags in the db
 };
 
-// TODO: option to add tags
 // TODO: option to ad images
 /**
  * @description Create a new post
@@ -70,8 +71,11 @@ const checkAndCreateHashtags = (content) => {
  * @param {Object} payload request body
  */
 const createMemo = (ownerId, payload) => {
-  const { content, tags, destination, images } = payload;
+  const { content, destination, images } = payload;
   const owner = ownerId;
+
+  // Check and create hashtags
+  const tags = checkAndCreateHashtags(content);
 
   const memory = new Memory({
     owner,
@@ -87,7 +91,6 @@ const createMemo = (ownerId, payload) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
-// TODO: option to update tags
 /**
  * @description Update an existing post
  * @param {ObjectId} postId memory ID
@@ -95,13 +98,16 @@ const createMemo = (ownerId, payload) => {
  * @param {Object} payload request body
  */
 const updateMemo = (postId, ownerId, payload) => {
-  const { content, tags, destination } = payload;
+  const { content, destination } = payload;
+
+  // Check and create hashtags
+  const tags = checkAndCreateHashtags(content);
 
   return Memory.findOneAndUpdate(
     { _id: postId, owner: ownerId },
     {
-      $set: { content, destination },
-      $addToSet: { tags },
+      $set: { content, destination, tags },
+      // $addToSet: { tags },
     },
     { new: true }
   )
@@ -174,5 +180,5 @@ module.exports = {
   deleteMemo,
   commentOnMemo,
   heatOnMemory,
-  checkAndCreateHashtags,
+  // checkAndCreateHashtags,
 };

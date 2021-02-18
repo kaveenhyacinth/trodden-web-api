@@ -9,12 +9,7 @@ const memorySchema = new mongoose.Schema(
     },
     content: String,
     destination: String,
-    tags: [
-      {
-        type: ObjectId,
-        ref: "Tag",
-      },
-    ],
+    tags: [String],
     heats: [
       {
         type: ObjectId,
