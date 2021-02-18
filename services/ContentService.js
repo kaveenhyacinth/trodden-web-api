@@ -1,6 +1,7 @@
 const Memory = require("../models/Memory");
-// const Tag = require("../models/Tag");
+const Tag = require("../models/Tag");
 
+// TODO: populate Nomads in heats
 /**
  * @description Get memories of the current user
  * @param {ObjectId} ownerId current signed user
@@ -14,6 +15,7 @@ const getMemos = (ownerId) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
+// TODO: populate Nomads in heats
 /**
  * @description Fetch memories by a specific user
  * @param {ObjectId} userId owner of the memories
@@ -27,6 +29,41 @@ const getMemoByUser = (userId) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
+const checkAndCreateHashtags = (content) => {
+  // extracts hashtags in the content
+  const regexp = /(^|\s)#[a-zA-Z0-9][\w-]*\b/g;
+  const result = content.match(regexp);
+
+  if (!result) {
+    console.log("No hashtags found in @checkAndCreateHashtags"); // <- clg
+    // return ["-1"];
+  }
+
+  // TODO: Remove repeated tags
+  const tags = result.map((text) => text.trim());
+  // console.log("Extracted Hashtag @checkAndCreateHashtags" + tags); // <- clg
+  // return tags;
+
+  // check their availability in the db
+  tags.map((tagString) => {
+    Tag.findOne({ tag_name: tagString }).then((res) => {
+      if (res) return [];
+
+      const tag = new Tag({ tag_name: tagString });
+      tag
+        .save()
+        .then(() => console.log("Tag has been saved to database"))
+        .catch((err) => console.log("Error creating tag: " + err));
+    });
+  });
+
+  return tags;
+
+  // store unavailable hashtags in the db
+};
+
+// TODO: option to add tags
+// TODO: option to ad images
 /**
  * @description Create a new post
  * @param {ObjectId} ownerId Cuttent user ID
@@ -50,6 +87,7 @@ const createMemo = (ownerId, payload) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
+// TODO: option to update tags
 /**
  * @description Update an existing post
  * @param {ObjectId} postId memory ID
@@ -135,5 +173,6 @@ module.exports = {
   updateMemo,
   deleteMemo,
   commentOnMemo,
-  heatOnMemory
+  heatOnMemory,
+  checkAndCreateHashtags,
 };
