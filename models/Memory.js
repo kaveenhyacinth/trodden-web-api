@@ -25,12 +25,7 @@ const memorySchema = new mongoose.Schema(
         content: String,
       },
     ],
-    images: [
-      {
-        data: Buffer,
-        contentType: String,
-      },
-    ],
+    images: [String]
   },
   { timestamps: true }
 );

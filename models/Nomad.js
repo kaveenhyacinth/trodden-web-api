@@ -42,10 +42,7 @@ const nomadSchema = new mongoose.Schema(
       type: String,
       maxlength: 160,
     },
-    prof_img: {
-      data: Buffer,
-      contentType: String,
-    },
+    prof_img: String,
     contact: String,
     occupation: String,
     location: {
