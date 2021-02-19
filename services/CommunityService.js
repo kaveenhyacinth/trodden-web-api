@@ -66,11 +66,17 @@ const createCaravan = (ownerId, imageData, payload) => {
 };
 
 /**
- *
- * @param {ObjectId} caravanId Caravan that is to be connect with
- * @param {ObjectId} userId
+ * @description Connect a user to a caravan
+ * @param {ObjectId} caravanId Caravan that is to be connected with
+ * @param {ObjectId} userId User that is to be connected with
  */
 const connectToCaravan = (caravanId, userId) => {
+  const isOwner = Caravan.findById(caravanId)
+    .then((caravan) => (caravan.owner == userId ? true : false))
+    .catch((err) => false);
+
+  if (isOwner) return { result: "Self connect is not allowed", success: false };
+
   return Caravan.findByIdAndUpdate(
     caravanId,
     {
@@ -84,13 +90,48 @@ const connectToCaravan = (caravanId, userId) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
-// TODO: update caravan
+/**
+ * @description Update a Caravan
+ * @param {ObjectId} caravanId Caravan that is to be updated
+ * @param {ObjectId} ownerId Caravan owner id
+ * @param {Object} payload HTTP request body
+ */
+const updateCaravan = (caravanId, ownerId, payload) => {
+  const { caravanName, desc, interests } = payload;
 
-// TODO: delete caravan
+  return Caravan.findOneAndUpdate(
+    { _id: caravanId, owner: ownerId },
+    {
+      $set: { caravan_name: caravanName, desc, interests },
+    },
+    { new: true }
+  )
+    .then((caravan) =>
+      caravan === null
+        ? { result: caravan, success: false }
+        : { result: caravan, success: true }
+    )
+    .catch((err) => ({ result: err, success: false }));
+};
+
+/**
+ * @description Delete a Caravan
+ * @param {ObjectId} caravanId Caravan that is to be deleted
+ * @param {ObjectId} ownerId Caravan owner id
+ */
+const deleteCaravan = (caravanId, ownerId) => {
+  return Caravan.findOneAndDelete({ _id: caravanId, owner: ownerId })
+    .then((result) =>
+      result === null ? { result, success: false } : { result, success: true }
+    )
+    .catch((err) => ({ result: err, success: false }));
+};
 
 module.exports = {
   createCaravan,
   getCaravanById,
   getCaravansByowner,
   getCaravansByUser,
+  connectToCaravan,
+  updateCaravan,
 };
