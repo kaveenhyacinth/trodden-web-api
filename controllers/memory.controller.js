@@ -15,7 +15,7 @@ const {
  */
 const getMemosController = async (req, res) => {
   try {
-    const ownerId = req.ownerId;
+    const ownerId = req.auth.id;
     const { result, success } = await getMemos(ownerId);
     if (!success) {
       return res.status(400).json({
@@ -75,8 +75,9 @@ const getMemoByUserController = async (req, res) => {
  */
 const createMemoController = async (req, res) => {
   try {
-    const ownerId = req.ownerId;
-    const { result, success } = await createMemo(ownerId, req.body);
+    const ownerId = req.auth.id;
+    console.log("Image: " + req.file);
+    const { result, success } = await createMemo(ownerId, req.body, req.file);
     if (!success) {
       return res.status(400).json({
         result,
@@ -88,6 +89,7 @@ const createMemoController = async (req, res) => {
       result,
       success,
       msg: "Memories has been created successfully",
+      // file: req.file
     });
   } catch (error) {
     return res.status(500).json({
@@ -106,7 +108,7 @@ const createMemoController = async (req, res) => {
 const updateMemoController = async (req, res) => {
   try {
     const postId = req.params["postId"];
-    const ownerId = req.ownerId;
+    const ownerId = req.auth.id;
     const { result, success } = await updateMemo(postId, ownerId, req.body);
     if (!success) {
       return res.status(400).json({
@@ -137,7 +139,7 @@ const updateMemoController = async (req, res) => {
 const deleteMemoController = async (req, res) => {
   try {
     const postId = req.params["postId"];
-    const ownerId = req.ownerId;
+    const ownerId = req.auth.id;
     const { result, success } = await deleteMemo(postId, ownerId);
     if (!success) {
       return res.status(400).json({
@@ -167,7 +169,7 @@ const deleteMemoController = async (req, res) => {
  */
 const commentOnMemoController = async (req, res) => {
   try {
-    const commentorId = req.ownerId;
+    const commentorId = req.auth.id;
     const { result, success } = await commentOnMemo(commentorId, req.body);
     if (!success) {
       return res.status(400).json({
@@ -197,7 +199,7 @@ const commentOnMemoController = async (req, res) => {
  */
 const heatOnMemoryController = async (req, res) => {
   try {
-    const heaterId = req.ownerId;
+    const heaterId = req.auth.id;
     const { result, success } = await heatOnMemory(heaterId, req.body);
     if (!success) {
       return res.status(400).json({

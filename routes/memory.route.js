@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../middlewares/multerUploader");
 
-const tokenDecoder = require("../middlewares/tokenDecoder");
+// const tokenDecoder = require("../middlewares/tokenDecoder");
 const {
   isAuthenticated,
   isSignedIn,
@@ -20,7 +21,7 @@ const {
  * @description Get all memories of the signed user : Protected
  * @name get/memories
  */
-router.get("/", tokenDecoder, isSignedIn, isAuthenticated, getMemosController);
+router.get("/", isSignedIn, isAuthenticated, getMemosController);
 
 /**
  * @description Get all memories of a specific user
@@ -34,9 +35,9 @@ router.get("/:userId", getMemoByUserController);
  */
 router.post(
   "/post",
-  tokenDecoder,
   isSignedIn,
   isAuthenticated,
+  upload.single("images"),
   createMemoController
 );
 
@@ -46,7 +47,6 @@ router.post(
  */
 router.put(
   "/update/:postId",
-  tokenDecoder,
   isSignedIn,
   isAuthenticated,
   updateMemoController
@@ -56,24 +56,18 @@ router.put(
  * @description Comment on a memory
  * @name put/commmentOnMemory
  */
-router.put("/comment", tokenDecoder, commentOnMemoController);
+router.put("/comment", commentOnMemoController);
 
 /**
  * @description React on a memory
  * @name patch/commmentOnMemory
  */
-router.patch("/heat", tokenDecoder, heatOnMemoryController);
+router.patch("/heat", heatOnMemoryController);
 
 /**
  * @description delete an existing memory : Protected
  * @name delete/deleteMemory
  */
-router.delete(
-  "/:postId",
-  tokenDecoder,
-  isSignedIn,
-  isAuthenticated,
-  deleteMemoController
-);
+router.delete("/:postId", isSignedIn, isAuthenticated, deleteMemoController);
 
 module.exports = router;
