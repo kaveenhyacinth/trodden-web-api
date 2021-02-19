@@ -1,7 +1,4 @@
 const Caravan = require("../models/Caravan");
-const Nomad = require("../models/Nomad");
-const Tag = require("../models/Tag");
-const Blaze = require("../models/Blaze");
 
 /**
  * @description Get a specific Caravan by its id
@@ -134,4 +131,5 @@ module.exports = {
   getCaravansByUser,
   connectToCaravan,
   updateCaravan,
+  deleteCaravan,
 };
