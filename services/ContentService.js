@@ -1,7 +1,7 @@
+// const fs = require("fs");
 const Memory = require("../models/Memory");
 const Tag = require("../models/Tag");
 
-// TODO: populate Nomads in heats
 /**
  * @description Get memories of the current user
  * @param {ObjectId} ownerId current signed user
@@ -11,11 +11,11 @@ const getMemos = (ownerId) => {
     .sort({ createdAt: -1 })
     .populate({ path: "owner", select: "first_name last_name" })
     .populate({ path: "comments.commentor", select: "first_name last_name" })
+    .populate({ path: "heats", select: "first_name last_name" })
     .then((memos) => ({ result: memos, success: true }))
     .catch((err) => ({ result: err, success: false }));
 };
 
-// TODO: populate Nomads in heats
 /**
  * @description Fetch memories by a specific user
  * @param {ObjectId} userId owner of the memories
@@ -25,6 +25,7 @@ const getMemoByUser = (userId) => {
     .sort({ createdAt: -1 })
     .populate({ path: "owner", select: "first_name last_name" })
     .populate({ path: "comments.commentor", select: "first_name last_name" })
+    .populate({ path: "heats", select: "first_name last_name" })
     .then((memos) => ({ result: memos, success: true }))
     .catch((err) => ({ result: err, success: false }));
 };
@@ -64,15 +65,18 @@ const checkAndCreateHashtags = (content) => {
   return tags;
 };
 
-// TODO: option to ad images
+// TODO: option to add multiple images
 /**
  * @description Create a new post
  * @param {ObjectId} ownerId Cuttent user ID
  * @param {Object} payload request body
  */
-const createMemo = (ownerId, payload) => {
-  const { content, destination, images } = payload;
+const createMemo = (ownerId, payload, imageData) => {
+  const { content, destination} = payload;
   const owner = ownerId;
+  // const data = fs.readFileSync(imageData.path);
+  // const contentType = imageData.mimetype;
+  const {path} = imageData;
 
   // Check and create hashtags
   const tags = checkAndCreateHashtags(content);
@@ -82,12 +86,15 @@ const createMemo = (ownerId, payload) => {
     content,
     destination,
     tags,
-    images,
+    images: [path]
   });
 
   return memory
     .save()
-    .then((result) => ({ result, success: true }))
+    .then((result) => {
+      result.images = undefined;
+      return { result, success: true };
+    })
     .catch((err) => ({ result: err, success: false }));
 };
 
@@ -104,14 +111,17 @@ const updateMemo = (postId, ownerId, payload) => {
   const tags = checkAndCreateHashtags(content);
 
   return Memory.findOneAndUpdate(
-    { _id: postId, owner: ownerId },
+    { owner: ownerId, _id: postId },
     {
       $set: { content, destination, tags },
-      // $addToSet: { tags },
     },
     { new: true }
   )
-    .then((memo) => ({ result: memo, success: true }))
+    .then((memo) =>
+      memo === null
+        ? { result: memo, success: false }
+        : { result: memo, success: true }
+    )
     .catch((err) => ({ result: err, success: false }));
 };
 
@@ -122,7 +132,9 @@ const updateMemo = (postId, ownerId, payload) => {
  */
 const deleteMemo = (postId, ownerId) => {
   return Memory.findOneAndDelete({ _id: postId, owner: ownerId })
-    .then((result) => ({ result, success: true }))
+    .then((result) =>
+      result === null ? { result, success: false } : { result, success: true }
+    )
     .catch((err) => ({ result: err, success: false }));
 };
 
