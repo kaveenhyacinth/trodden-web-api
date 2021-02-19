@@ -80,10 +80,10 @@ const nomadSchema = new mongoose.Schema(
         ref: "Nomad",
       },
     ],
-    caravan: {
-      type: ObjectId,
-      ref: "Caravan",
-    },
+    // caravan: {
+    //   type: ObjectId,
+    //   ref: "Caravan",
+    // },
     salt: String,
     role: {
       type: Number,
