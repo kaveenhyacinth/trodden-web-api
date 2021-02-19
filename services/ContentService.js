@@ -65,18 +65,18 @@ const checkAndCreateHashtags = (content) => {
   return tags;
 };
 
-// TODO: option to add multiple images
+// FIXME: option to add multiple images
 /**
  * @description Create a new post
  * @param {ObjectId} ownerId Cuttent user ID
  * @param {Object} payload request body
  */
 const createMemo = (ownerId, payload, imageData) => {
-  const { content, destination} = payload;
+  const { content, destination } = payload;
   const owner = ownerId;
   // const data = fs.readFileSync(imageData.path);
   // const contentType = imageData.mimetype;
-  const {path} = imageData;
+  const { path } = imageData;
 
   // Check and create hashtags
   const tags = checkAndCreateHashtags(content);
@@ -86,16 +86,17 @@ const createMemo = (ownerId, payload, imageData) => {
     content,
     destination,
     tags,
-    images: [path]
+    images: [path],
   });
 
-  return memory
+  const result = memory
     .save()
     .then((result) => {
-      result.images = undefined;
       return { result, success: true };
     })
     .catch((err) => ({ result: err, success: false }));
+
+  return result;
 };
 
 /**
