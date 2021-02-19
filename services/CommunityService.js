@@ -65,7 +65,24 @@ const createCaravan = (ownerId, imageData, payload) => {
   return result;
 };
 
-// TODO: connect to a caravan
+/**
+ *
+ * @param {ObjectId} caravanId Caravan that is to be connect with
+ * @param {ObjectId} userId
+ */
+const connectToCaravan = (caravanId, userId) => {
+  return Caravan.findByIdAndUpdate(
+    caravanId,
+    {
+      $addToSet: { nomads: userId },
+    },
+    { new: true }
+  )
+    .then((result) =>
+      result === null ? { result, success: false } : { result, success: true }
+    )
+    .catch((err) => ({ result: err, success: false }));
+};
 
 // TODO: update caravan
 
