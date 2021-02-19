@@ -4,7 +4,7 @@ const { getProfilebyId, setupProfile } = require("../services/ProfileService");
 // extract token and save current user to req.profile
 const getProfileByIdController = async (req, res, next) => {
   try {
-    const id = req.ownerId;
+    const id = req.auth.id;
     console.log("Id @ProfileController @getProfilebyId : " + id);
     const result = await getProfilebyId(id);
     if (result.nomad === null) {
@@ -44,7 +44,7 @@ const getProfileController = (req, res) => {
 // setup profile info after a successful sign-up
 const setUpProfileController = async (req, res) => {
   try {
-    const result = await setupProfile(req.owneId, req.body);
+    const result = await setupProfile(req.auth.id, req.body, req.file);
     return res
       .status(200)
       .json({ msg: "Updated successfully", result, success: true });

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
+const upload = require("../middlewares/multerUploader");
 const tokenDecoder = require("../middlewares/tokenDecoder");
 const {
   getProfileByIdController,
@@ -26,6 +27,7 @@ router.put(
   tokenDecoder,
   isSignedIn,
   isAuthenticated,
+  upload.single("image"),
   setUpProfileController
 );
 
