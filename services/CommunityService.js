@@ -16,7 +16,7 @@ const getCaravanById = (caravanId) => {
  * @description Get all Caravans which are owned by a user
  * @param {ObjectId} ownerId Caravan owner id
  */
-const getCaravansByowner = (ownerId) => {
+const getCaravansByOwner = (ownerId) => {
   return Caravan.find({ owner: ownerId })
     .populate({ path: "owner", select: "_id first_name last_name prof_img" })
     .populate({ path: "nomads", select: "_id first_name last_name prof_img" })
@@ -127,7 +127,7 @@ const deleteCaravan = (caravanId, ownerId) => {
 module.exports = {
   createCaravan,
   getCaravanById,
-  getCaravansByowner,
+  getCaravansByOwner,
   getCaravansByUser,
   connectToCaravan,
   updateCaravan,
