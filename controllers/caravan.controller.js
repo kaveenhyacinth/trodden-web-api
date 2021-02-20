@@ -98,7 +98,7 @@ const getCaravansByUserController = async (req, res) => {
   }
 };
 
-// TODO: get caravans by interests and tags controller
+// TODO: get caravans by interests controller
 
 /**
  * @description Create a caravan

@@ -36,7 +36,7 @@ const getCaravansByUser = (userId) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
-// TODO: get caravans by interests and tags
+// TODO: get caravans by interests
 
 /**
  * @description Create a new Caravan
