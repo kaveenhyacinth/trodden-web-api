@@ -198,12 +198,38 @@ const updateCaravanController = async (req, res) => {
   }
 };
 
+// TODO: update caravan image controller
+
 /**
  * @description Delete a caravan
  * @param {Object} req
  * @param {Object} res
  */
-const deleteCaravanController = async (req, res) => {};
+const deleteCaravanController = async (req, res) => {
+  try {
+    const caravanId = req.params["caravanId"];
+    const ownerId = req.auth.id;
+    const { result, success } = await deleteCaravan(caravanId, ownerId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while deleting the caravan",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Caravan has been deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @deleteCaravanController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 module.exports = {
   createCaravanController,
