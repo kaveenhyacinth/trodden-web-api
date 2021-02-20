@@ -105,23 +105,27 @@ const getCaravansByUserController = async (req, res) => {
  */
 const createCaravanController = async (req, res) => {
   try {
-    const userId = req.auth.id;
-    const { result, success } = await getCaravansByUser(userId);
+    const ownerId = req.auth.id;
+    const { result, success } = await createCaravan(
+      ownerid,
+      req.file,
+      req.body
+    );
     if (!success) {
       return res.status(400).json({
         result,
         success,
-        msg: "Something went wrong while fetching the caravans by user",
+        msg: "Something went wrong while creating the caravan",
       });
     }
     return res.status(200).json({
       result,
       success,
-      msg: "Caravans has been fetched successfully by user",
+      msg: "Caravan has been created successfully",
     });
   } catch (error) {
     return res.status(500).json({
-      msg: "Internal server error @getCaravansByUserController",
+      msg: "Internal server error @createCaravanController",
       err: error,
       success: false,
     });
