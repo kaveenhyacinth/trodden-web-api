@@ -168,7 +168,35 @@ const connectToCaravanController = async (req, res) => {
  * @param {Object} req
  * @param {Object} res
  */
-const updateCaravanController = async (req, res) => {};
+const updateCaravanController = async (req, res) => {
+  try {
+    const caravanId = req.params["caravanId"];
+    const ownerId = req.auth.id;
+    const { result, success } = await updateCaravan(
+      caravanId,
+      ownerId,
+      req.body
+    );
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while updating the caravan",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Caravan has been updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @updateCaravanController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 /**
  * @description Delete a caravan
