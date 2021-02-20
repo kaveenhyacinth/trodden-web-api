@@ -137,7 +137,31 @@ const createCaravanController = async (req, res) => {
  * @param {Object} req
  * @param {Object} res
  */
-const connectToCaravanController = async (req, res) => {};
+const connectToCaravanController = async (req, res) => {
+  try {
+    const caravanId = req.params["caravanId"];
+    const userId = req.auth.id;
+    const { result, success } = await connectToCaravan(caravanId, userId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while connecting to the caravan",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Connecting to the caravan has been succeeded",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @connectToCaravanController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 /**
  * @description Update a caravan meta
