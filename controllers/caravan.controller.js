@@ -107,7 +107,7 @@ const createCaravanController = async (req, res) => {
   try {
     const ownerId = req.auth.id;
     const { result, success } = await createCaravan(
-      ownerid,
+      ownerId,
       req.file,
       req.body
     );

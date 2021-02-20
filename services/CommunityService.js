@@ -67,9 +67,12 @@ const createCaravan = (ownerId, imageData, payload) => {
  * @param {ObjectId} caravanId Caravan that is to be connected with
  * @param {ObjectId} userId User that is to be connected with
  */
-const connectToCaravan = (caravanId, userId) => {
-  const isOwner = Caravan.findById(caravanId)
-    .then((caravan) => (caravan.owner == userId ? true : false))
+const connectToCaravan = async (caravanId, userId) => {
+  const isOwner = await Caravan.findById(caravanId)
+    .then((caravan) => {
+      if (caravan.owner != userId) return false;
+      return true;
+    })
     .catch((err) => false);
 
   if (isOwner) return { result: "Self connect is not allowed", success: false };

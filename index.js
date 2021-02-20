@@ -20,12 +20,14 @@ const authRoute = require("./routes/auth.route");
 const profileRoute = require("./routes/profile.route");
 const interestRoute = require("./routes/interest.route");
 const memoryRoute = require("./routes/memory.route");
+const caravanRoute = require("./routes/caravan.route");
 
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/profile", profileRoute);
 app.use("/api/interests", interestRoute);
 app.use("/api/memories", memoryRoute);
+app.use("/api/caravan", caravanRoute);
 
 // Server instance
 const PORT = process.env.PORT || 5000;

@@ -35,7 +35,7 @@ const signin = (payload) => {
         };
       }
 
-      const { _id } = nomad;
+      const { _id, first_name, last_name, username, email } = nomad;
       // Create the Auth token
       const token = jwt.sign({ id: _id }, process.env.SECRET);
 
@@ -43,6 +43,13 @@ const signin = (payload) => {
         msg: "Signin Successful",
         token: token,
         success: true,
+        result: {
+          id: _id,
+          firstName: first_name,
+          lastName: last_name,
+          username,
+          email
+        }
       };
     })
     .catch((err) => ({

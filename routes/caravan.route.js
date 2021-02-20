@@ -16,6 +16,7 @@ const {
   deleteCaravanController,
 } = require("../controllers/caravan.controller");
 
+
 router.get("/own", isSignedIn, isAuthenticated, getCaravansByOwnerController);
 router.get("/my", isSignedIn, isAuthenticated, getCaravansByUserController);
 router.get(

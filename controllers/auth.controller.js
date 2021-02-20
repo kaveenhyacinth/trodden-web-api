@@ -22,15 +22,17 @@ const signinController = async (req, res) => {
   if (!errors.isEmpty()) return res.status(422).json(errors);
 
   try {
-    const { msg, token, success } = await signin(req.body);
+    const { result, msg, token, success } = await signin(req.body);
     if (!success) {
       return res.status(400).json({ msg, success });
     }
     console.log("@SigninController", success); // <-- clg
-    return res
-      .status(200)
-      .cookie("token", token, { expire: new Date() + 29 })
-      .json({ msg, success, token });
+    return (
+      res
+        .status(200)
+        // .cookie("token", token, { expire: new Date() + 29 })
+        .json({ msg, result, token, success })
+    );
   } catch (error) {
     return res.status(500).json(error);
   }
