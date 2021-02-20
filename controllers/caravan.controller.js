@@ -46,7 +46,7 @@ const getCaravanByIdController = async (req, res) => {
 const getCaravansByOwnerController = async (req, res) => {
   try {
     const ownerId = req.auth.id;
-    const {result, success} = await getCaravansByOwner(ownerId);
+    const { result, success } = await getCaravansByOwner(ownerId);
     if (!success) {
       return res.status(400).json({
         result,
@@ -73,14 +73,60 @@ const getCaravansByOwnerController = async (req, res) => {
  * @param {Object} req
  * @param {Object} res
  */
-const getCaravansByUserController = async (req, res) => {};
+const getCaravansByUserController = async (req, res) => {
+  try {
+    const userId = req.auth.id;
+    const { result, success } = await getCaravansByUser(userId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while fetching the caravans by user",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Caravans has been fetched successfully by user",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getCaravansByUserController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 /**
  * @description Create a caravan
  * @param {Object} req
  * @param {Object} res
  */
-const createCaravanController = async (req, res) => {};
+const createCaravanController = async (req, res) => {
+  try {
+    const userId = req.auth.id;
+    const { result, success } = await getCaravansByUser(userId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while fetching the caravans by user",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Caravans has been fetched successfully by user",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getCaravansByUserController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 /**
  * @description Connect with a caravan
