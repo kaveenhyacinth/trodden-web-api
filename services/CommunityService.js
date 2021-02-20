@@ -111,6 +111,8 @@ const updateCaravan = (caravanId, ownerId, payload) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
+// TODO: Update caravan image feature
+
 /**
  * @description Delete a Caravan
  * @param {ObjectId} caravanId Caravan that is to be deleted
