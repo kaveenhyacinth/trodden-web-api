@@ -6,7 +6,7 @@ const {
   getInterestsController,
 } = require("../controllers/interests.controller");
 
-router.post("/add", createInterestController);
+router.post("/new", createInterestController);
 router.get("/", getInterestsController);
 
 module.exports = router;

@@ -34,7 +34,7 @@ router.get("/:userId", getMemoByUserController);
  * @name post/createMemory
  */
 router.post(
-  "/post",
+  "/new",
   isSignedIn,
   isAuthenticated,
   upload.single("images"),

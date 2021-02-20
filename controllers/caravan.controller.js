@@ -7,6 +7,7 @@ const {
   updateCaravan,
   deleteCaravan,
 } = require("../services/CommunityService");
+const { suggestCaravansByInterests } = require("../services/SuggestionService");
 
 /**
  * @description Get a caravan by its id
@@ -15,6 +16,7 @@ const {
  */
 const getCaravanByIdController = async (req, res) => {
   try {
+    console.log("inside getcaravanby id")
     const caravanId = req.params["caravanId"];
     const { result, success } = await getCaravanById(caravanId);
     if (!success) {
@@ -57,7 +59,7 @@ const getCaravansByOwnerController = async (req, res) => {
     return res.status(200).json({
       result,
       success,
-      msg: "Caravans has been fetched successfully by owner",
+      msg: "Caravans have been fetched successfully based on owner",
     });
   } catch (error) {
     return res.status(500).json({
@@ -87,7 +89,7 @@ const getCaravansByUserController = async (req, res) => {
     return res.status(200).json({
       result,
       success,
-      msg: "Caravans has been fetched successfully by user",
+      msg: "Caravans have been fetched successfully based on user",
     });
   } catch (error) {
     return res.status(500).json({
@@ -99,6 +101,32 @@ const getCaravansByUserController = async (req, res) => {
 };
 
 // TODO: get caravans by interests controller
+const getCaravansByInterestsController = async (req, res) => {
+  try {
+    const userId = req.auth.id;
+    const { result, success } = await suggestCaravansByInterests(userId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg:
+          "Something went wrong while fetching caravan suggestions by interests",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg:
+        "Caravans suggesstions have been fetched successfully based on interests",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getCaravansByInterestsController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 /**
  * @description Create a caravan
@@ -241,4 +269,5 @@ module.exports = {
   connectToCaravanController,
   updateCaravanController,
   deleteCaravanController,
+  getCaravansByInterestsController,
 };

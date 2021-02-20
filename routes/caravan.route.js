@@ -11,16 +11,22 @@ const {
   getCaravanByIdController,
   getCaravansByOwnerController,
   getCaravansByUserController,
+  getCaravansByInterestsController,
   connectToCaravanController,
   updateCaravanController,
   deleteCaravanController,
 } = require("../controllers/caravan.controller");
 
-
 router.get("/own", isSignedIn, isAuthenticated, getCaravansByOwnerController);
 router.get("/my", isSignedIn, isAuthenticated, getCaravansByUserController);
 router.get(
-  "/:caravanId",
+  "/sug",
+  isSignedIn,
+  isAuthenticated,
+  getCaravansByInterestsController
+);
+router.get(
+  "/fetch/:caravanId",
   isSignedIn,
   isAuthenticated,
   getCaravanByIdController

@@ -5,6 +5,7 @@ const Caravan = require("../models/Caravan");
  * @param {ObjectId} caravanId
  */
 const getCaravanById = (caravanId) => {
+  console.log("inside get caravan by id");
   return Caravan.findById(caravanId)
     .populate({ path: "owner", select: "_id first_name last_name prof_img" })
     .populate({ path: "nomads", select: "_id first_name last_name prof_img" })
@@ -36,8 +37,6 @@ const getCaravansByUser = (userId) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
-// TODO: get caravans by interests
-
 /**
  * @description Create a new Caravan
  * @param {ObjectId} ownerId Caravan creator's id
@@ -52,8 +51,9 @@ const createCaravan = (ownerId, imageData, payload) => {
     owner: ownerId,
     caravan_name: caravanName,
     desc: description,
-    interests,
+    interests: interests,
     display_img: path,
+    nomads: ownerId,
   });
 
   const result = caravan
@@ -70,26 +70,25 @@ const createCaravan = (ownerId, imageData, payload) => {
  * @param {ObjectId} userId User that is to be connected with
  */
 const connectToCaravan = async (caravanId, userId) => {
-  const isOwner = await Caravan.findById(caravanId)
-    .then((caravan) => {
-      if (caravan.owner != userId) return false;
-      return true;
-    })
-    .catch((err) => false);
+  try {
+    const caravan = await Caravan.findById(caravanId);
+    const isOwner = caravan.owner == userId ? true : false;
+    if (isOwner)
+      return { result: "Self connect is not allowed", success: false };
+    const updatedCaravan = await Caravan.findByIdAndUpdate(
+      caravanId,
+      {
+        $addToSet: { nomads: userId },
+      },
+      { new: true }
+    );
 
-  if (isOwner) return { result: "Self connect is not allowed", success: false };
-
-  return Caravan.findByIdAndUpdate(
-    caravanId,
-    {
-      $addToSet: { nomads: userId },
-    },
-    { new: true }
-  )
-    .then((result) =>
-      result === null ? { result, success: false } : { result, success: true }
-    )
-    .catch((err) => ({ result: err, success: false }));
+    return updatedCaravan === null
+      ? { result: null, success: false }
+      : { result: updatedCaravan, success: true };
+  } catch (error) {
+    return { result: error, success: false };
+  }
 };
 
 /**
