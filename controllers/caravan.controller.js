@@ -98,6 +98,8 @@ const getCaravansByUserController = async (req, res) => {
   }
 };
 
+// TODO: get caravans by interests and tags controller
+
 /**
  * @description Create a caravan
  * @param {Object} req
