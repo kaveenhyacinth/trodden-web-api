@@ -31,7 +31,7 @@ const getCaravanByIdController = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      msg: "Internal server error @getMemoByUserController",
+      msg: "Internal server error @getCaravanByIdController",
       err: error,
       success: false,
     });
@@ -43,7 +43,30 @@ const getCaravanByIdController = async (req, res) => {
  * @param {Object} req
  * @param {Object} res
  */
-const getCaravansByOwnerController = async (req, res) => {};
+const getCaravansByOwnerController = async (req, res) => {
+  try {
+    const ownerId = req.auth.id;
+    const {result, success} = await getCaravansByOwner(ownerId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while fetching the caravans by owner",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Caravans has been fetched successfully by owner",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getCaravansByOwnerController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 /**
  * @description Get caravans where a specific user is connected
