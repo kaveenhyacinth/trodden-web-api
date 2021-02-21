@@ -200,7 +200,8 @@ const commentOnMemoController = async (req, res) => {
 const heatOnMemoryController = async (req, res) => {
   try {
     const heaterId = req.auth.id;
-    const { result, success } = await heatOnMemory(heaterId, req.body);
+    const postId = req.param["postId"];
+    const { result, success } = await heatOnMemory(heaterId, postId);
     if (!success) {
       return res.status(400).json({
         result,

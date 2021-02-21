@@ -163,26 +163,32 @@ const commentOnMemo = (commentorId, payload) => {
  * @param {ObjectId} heaterId Reactor id (current user)
  * @param {*} payload Request body
  */
-const heatOnMemory = (heaterId, payload) => {
-  const { postId, reacted } = payload;
-
-  if (reacted) {
-    return Memory.findByIdAndUpdate(
-      postId,
-      { $pull: { heats: heaterId } },
-      { new: true }
-    )
-      .then((memo) => ({ result: memo, success: true }))
-      .catch((err) => ({ result: err, success: false }));
+const heatOnMemory = async (heaterId, postId) => {
+  try {
+    // check if user reacted before
+    const memory = await Memory.findOne({ _id: postId, heats: heaterId });
+    if (memory) {
+      // if reacted pull user
+      return Memory.findByIdAndUpdate(
+        postId,
+        { $pull: { heats: heaterId } },
+        { new: true }
+      )
+        .then((memo) => ({ result: memo, success: true }))
+        .catch((err) => ({ result: err, success: false }));
+    } else {
+      // if not reacted push user
+      return Memory.findByIdAndUpdate(
+        postId,
+        { $push: { heats: heaterId } },
+        { new: true }
+      )
+        .then((memo) => ({ result: memo, success: true }))
+        .catch((err) => ({ result: err, success: false }));
+    }
+  } catch (error) {
+    return { result: error, success: false };
   }
-
-  return Memory.findByIdAndUpdate(
-    postId,
-    { $push: { heats: heaterId } },
-    { new: true }
-  )
-    .then((memo) => ({ result: memo, success: true }))
-    .catch((err) => ({ result: err, success: false }));
 };
 
 module.exports = {

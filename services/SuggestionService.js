@@ -11,7 +11,7 @@ const suggestCaravansByInterests = async (userId) => {
     });
     return { result: caravans, success: true };
   } catch (error) {
-    return { result: error.message, success: false };
+    return { result: error, success: false };
   }
 };
 

@@ -56,13 +56,18 @@ router.put(
  * @description Comment on a memory
  * @name put/commmentOnMemory
  */
-router.put("/comment", commentOnMemoController);
+router.put("/comment", isSignedIn, isAuthenticated, commentOnMemoController);
 
 /**
  * @description React on a memory
- * @name patch/commmentOnMemory
+ * @name patch/heatOnMemory
  */
-router.patch("/heat", heatOnMemoryController);
+router.patch(
+  "/heat/:postId",
+  isSignedIn,
+  isAuthenticated,
+  heatOnMemoryController
+);
 
 /**
  * @description delete an existing memory : Protected

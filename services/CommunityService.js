@@ -1,5 +1,7 @@
 const Caravan = require("../models/Caravan");
 
+//#region CARAVAN METHODS
+
 /**
  * @description Get a specific Caravan by its id
  * @param {ObjectId} caravanId
@@ -91,6 +93,10 @@ const connectToCaravan = async (caravanId, userId) => {
   }
 };
 
+// TODO: Leave a caravan
+
+// TODO: Kick a Nomad from Caravan
+
 /**
  * @description Update a Caravan
  * @param {ObjectId} caravanId Caravan that is to be updated
@@ -129,6 +135,23 @@ const deleteCaravan = (caravanId, ownerId) => {
     )
     .catch((err) => ({ result: err, success: false }));
 };
+//#endregion
+
+//#region BLAZE METHODS
+
+// TODO: Create new blaze
+
+// TODO: Get blaze by id
+
+// TODO: Get blazes by caravan
+
+// TODO: Update a blaze
+
+// TODO: Mark as going to a blaze
+
+// TODO: Delete a blaze
+
+//#endregion
 
 module.exports = {
   createCaravan,
