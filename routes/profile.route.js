@@ -3,20 +3,18 @@ const router = express.Router();
 const { check } = require("express-validator");
 
 const upload = require("../middlewares/multerUploader");
-const tokenDecoder = require("../middlewares/tokenDecoder");
 const {
   getProfileByIdController,
   getProfileController,
   setUpProfileController,
 } = require("../controllers/profile.controller");
 const {
-  isAuthenticated,
   isSignedIn,
+  isAuthenticated,
 } = require("../middlewares/authenticationChecker");
 
 router.get(
   "/",
-  tokenDecoder,
   isSignedIn,
   isAuthenticated,
   getProfileByIdController,
@@ -24,7 +22,6 @@ router.get(
 );
 router.put(
   "/setup",
-  tokenDecoder,
   isSignedIn,
   isAuthenticated,
   upload.single("image"),
