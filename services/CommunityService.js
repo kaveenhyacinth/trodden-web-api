@@ -1,4 +1,5 @@
 const Caravan = require("../models/Caravan");
+const Blaze = require("../models/Blaze");
 
 //#region CARAVAN METHODS
 
@@ -140,16 +141,25 @@ const deleteCaravan = (caravanId, ownerId) => {
 //#region BLAZE METHODS
 
 // TODO: Create new blaze
+const createBlaze = (ownerId, imageData, payload) => {};
+
+// TODO: Get blaze by date period
+const getRecentBlazes = (balzeId) => {};
 
 // TODO: Get blaze by id
+const getBlazeById = (balzeId) => {};
 
 // TODO: Get blazes by caravan
+const getBlazesByCaravan = (caravanId) => {};
 
 // TODO: Update a blaze
+const updateBalze = (ownerId, blazeId, payload) => {};
 
 // TODO: Mark as going to a blaze
+const markAsGoingToBlaze = (userId, blazeId) => {};
 
 // TODO: Delete a blaze
+const deleteBlaze = (ownerId, blazeId) => {};
 
 //#endregion
 
@@ -161,4 +171,11 @@ module.exports = {
   connectToCaravan,
   updateCaravan,
   deleteCaravan,
+  createBlaze,
+  getRecentBlazes,
+  getBlazesByCaravan,
+  getBlazeById,
+  markAsGoingToBlaze,
+  updateBalze,
+  deleteBlaze,
 };
