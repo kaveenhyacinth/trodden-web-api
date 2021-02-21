@@ -16,7 +16,7 @@ const {
   deleteBlazeController,
 } = require("../controllers/blaze.controller");
 
-router.post("/new", isSignedIn, isAuthenticated, createBlazeController);
+router.post("/new", isSignedIn, isAuthenticated, upload.single("image"), createBlazeController);
 
 router.get("/", isSignedIn, getRecentBlazesController);
 router.get("/i/:blazeId", isSignedIn, getBlazeByIdController);

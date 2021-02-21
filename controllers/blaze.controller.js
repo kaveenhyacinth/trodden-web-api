@@ -9,7 +9,33 @@ const {
 } = require("../services/CommunityService");
 
 // TODO: Create new blaze
-const createBlazeController = async (req, res) => {};
+const createBlazeController = async (req, res) => {
+  try {
+    console.log("inside create blaze")
+    const ownerId = req.auth.id;
+    const imageData = req.file;
+    const payload = req.body;
+    const { result, success } = await createBlaze(ownerId, imageData, payload);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while creating the blaze",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Blaze has been created successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @createBlazeController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 // TODO: Get blaze by date period
 const getRecentBlazesController = async (req, res) => {};

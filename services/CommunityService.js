@@ -141,7 +141,38 @@ const deleteCaravan = (caravanId, ownerId) => {
 //#region BLAZE METHODS
 
 // TODO: Create new blaze
-const createBlaze = (ownerId, imageData, payload) => {};
+const createBlaze = async (ownerId, imageData, payload) => {
+  const { path } = imageData;
+  const { caravan, title, desc } = payload;
+
+  // check if caravan is owned by the ownerId
+  try {
+    const caravanOwner = await Caravan.findOne({
+      _id: caravan,
+      owner: ownerId,
+    });
+
+    // if not return
+    if (!caravanOwner) return { result: "Unauthorized Action", success: false };
+
+    // if so create the new blaze
+    const blaze = new Blaze({
+      caravan,
+      title,
+      desc,
+      image: path,
+      participants: ownerId,
+    });
+    const result = blaze
+      .save()
+      .then((result) => ({ result, success: true }))
+      .catch((err) => ({ result: err, success: false }));
+
+    return result;
+  } catch (error) {
+    return { result: error, success: false };
+  }
+};
 
 // TODO: Get blaze by date period
 const getRecentBlazes = (balzeId) => {};
