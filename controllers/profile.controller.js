@@ -2,49 +2,39 @@ const { validationResult } = require("express-validator");
 const { getProfilebyId, setupProfile } = require("../services/ProfileService");
 
 // extract token and save current user to req.profile
-const getProfileByIdController = async (req, res, next) => {
+const getProfileByIdController = async (req, res) => {
+  const userId = req.params.userId;
   try {
-    const id = req.auth.id;
-    console.log("Id @ProfileController @getProfilebyId : " + id);
-    const result = await getProfilebyId(id);
-    if (result.nomad === null) {
+    const { result, success } = await getProfilebyId(userId);
+    if (!success) {
       return res.status(400).json({
-        msg: "Couldn't find the user @extractor",
-        success: false,
+        result,
+        success,
+        msg: result,
       });
     }
-    req.profile = result.nomad;
-    console.log("Debug profile @extractor: " + req.profile);
-    req.profile.salt = undefined;
-    req.profile.encry_password = undefined;
-    next();
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Profile been fetched successfully",
+    });
   } catch (error) {
     return res.status(500).json({
-      msg: "Internal server error @extractor",
+      msg: "Internal server error @getProfileByIdController",
       err: error,
       success: false,
     });
   }
-  // console.log("Authorization @profile @extractor: " + token); // <- clg
-  // console.log("User @profile @extractor: " + result.nomad); // <- clg
 };
 
-// access to req.profile and get the current user profile
-const getProfileController = (req, res) => {
-  if (req.profile === null)
-    return res
-      .status(400)
-      .json({ msg: "Couldn't find the user", err: error, success: false });
-
-  return res
-    .status(200)
-    .json({ profile: req.profile, msg: "Got profile", success: true });
-};
-
-// setup profile info after a successful sign-up
+/**
+ * @description setup profile info after a successful sign-up
+ * @param {Object} req HTTP request
+ * @param {Object} res HTTP respone
+ */
 const setUpProfileController = async (req, res) => {
   try {
-    const result = await setupProfile(req.auth.id, req.body, req.file);
+    const result = await setupProfile(req.body, req.file);
     return res
       .status(200)
       .json({ msg: "Updated successfully", result, success: true });
@@ -59,6 +49,5 @@ const setUpProfileController = async (req, res) => {
 
 module.exports = {
   getProfileByIdController,
-  getProfileController,
   setUpProfileController,
 };
