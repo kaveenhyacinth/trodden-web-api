@@ -1,6 +1,5 @@
 const { signup, signin } = require("../services/AuthenticationService");
 const { validationResult } = require("express-validator");
-const jwt = require("jsonwebtoken");
 
 // Signup a user
 const signupController = async (req, res) => {
@@ -8,11 +7,26 @@ const signupController = async (req, res) => {
   if (!errors.isEmpty()) return res.status(422).json(errors);
 
   try {
-    const result = await signup(req.body);
+    const { result, success } = await signup(req.body);
     console.log("@SignupController", result); //<-- clg
-    return res.status(200).json(result);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Signup mail has been sent successfully",
+    });
   } catch (error) {
-    return res.status(400).json(error);
+    return res.status(500).json({
+      msg: "Internal server error @signupController",
+      err: error,
+      success: false,
+    });
   }
 };
 

@@ -1,27 +1,55 @@
 const Nomad = require("../models/Nomad");
 const jwt = require("jsonwebtoken");
 
-const signup = (payload) => {
+const { sendVerificationMail } = require("../services/MailingService");
+
+/**
+ * @description Sent verification mail on sign-up
+ * @param {Object} payload HTTP request body
+ * @async
+ */
+const signup = async (payload) => {
   const { firstName, lastName, username, email, password } = payload;
 
-  const nomad = new Nomad({
-    first_name: firstName,
-    last_name: lastName,
-    username,
-    email,
-    password,
-  });
+  // encode user input in a jwt
+  // TODO: encrypt password
+  const signupToken = jwt.sign(
+    { firstName, lastName, username, email, password },
+    process.env.SECRET
+  );
 
-  return nomad
-    .save()
-    .then(() => ({ msg: "Welcome to Trodden", success: true }))
-    .catch((err) => ({
-      err,
-      msg: "Error occured while signing up. Please try again!",
-      success: false,
-    }));
+  // send mail and jwt
+  try {
+    const { result, success } = await sendVerificationMail(email, firstName);
+    if (!success) return { result, success: false };
+    return { result: { ...result, signupToken }, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
 };
 
+// TODO: activate account
+// const activate = async (payload) => {
+//   // decode activate token
+
+//   // save user into db
+//   const nomad = new Nomad({
+//     first_name: firstName,
+//     last_name: lastName,
+//     username,
+//     email,
+//     password,
+//   });
+
+//   try {
+//     const newNomad = await nomad.save();
+//     return;
+//   } catch (error) {
+//     return { result: error.message, success: false };
+//   }
+// };
+
+// TODO: Sign in
 const signin = (payload) => {
   const { email, password } = payload;
 
@@ -48,21 +76,21 @@ const signin = (payload) => {
           firstName: first_name,
           lastName: last_name,
           username,
-          email
-        }
+          email,
+        },
       };
     })
     .catch((err) => ({
-        msg: "Email is not valid or not a registered user",
-        success: false,
-        err,
-      })
-    );
+      msg: "Email is not valid or not a registered user",
+      success: false,
+      err,
+    }));
 
-    return result;
+  return result;
 };
 
 module.exports = {
   signup,
-  signin
+  // activate,
+  signin,
 };

@@ -11,10 +11,6 @@ const {
   checkEmail,
   checkUsername,
 } = require("../middlewares/userAvailabilityChecker");
-const {
-  isAuthenticated,
-  isSignedIn,
-} = require("../middlewares/authenticationChecker");
 
 // Signup route
 router.post(
