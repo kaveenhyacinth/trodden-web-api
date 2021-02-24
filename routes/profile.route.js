@@ -24,6 +24,7 @@ router.get(
   isAuthenticated,
   getProfileByIdController
 );
+
 /**
  * @description Get any user by id
  * @name get/userProfile
