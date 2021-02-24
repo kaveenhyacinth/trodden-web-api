@@ -2,8 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
+//#region IMPORTS
 const {
   signupController,
+  activateAccountController,
   signinController,
   signoutController,
 } = require("../controllers/auth.controller");
@@ -11,6 +13,7 @@ const {
   checkEmail,
   checkUsername,
 } = require("../middlewares/userAvailabilityChecker");
+//#endregion
 
 // Signup route
 router.post(
@@ -34,6 +37,9 @@ router.post(
   checkUsername,
   signupController
 );
+
+// activate route
+router.post("/activate", activateAccountController);
 
 // Signin route
 router.post(

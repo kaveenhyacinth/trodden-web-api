@@ -1,7 +1,8 @@
 const Nomad = require("../models/Nomad");
-const jwt = require("jsonwebtoken");
 
 const { sendVerificationMail } = require("../services/MailingService");
+const { encrypt, decrypt } = require("../jobs/cipherEngine");
+const { signJWT, verifyJWT } = require("../jobs/JWTEngine");
 
 /**
  * @description Sent verification mail on sign-up
@@ -12,11 +13,18 @@ const signup = async (payload) => {
   const { firstName, lastName, username, email, password } = payload;
 
   // encode user input in a jwt
-  // TODO: encrypt password
-  const signupToken = jwt.sign(
-    { firstName, lastName, username, email, password },
-    process.env.SECRET
-  );
+  const JWTPayload = {
+    firstName,
+    lastName,
+    username: encrypt(username),
+    email: encrypt(email),
+    password: encrypt(password),
+  };
+
+  var { result, success } = signJWT(JWTPayload);
+  if (!success) return { result, success };
+  const signupToken = result;
+  result, (success = undefined);
 
   // send mail and jwt
   try {
@@ -28,26 +36,37 @@ const signup = async (payload) => {
   }
 };
 
-// TODO: activate account
-// const activate = async (payload) => {
-//   // decode activate token
+// TODO: Update less secure app on in google
 
-//   // save user into db
-//   const nomad = new Nomad({
-//     first_name: firstName,
-//     last_name: lastName,
-//     username,
-//     email,
-//     password,
-//   });
+/**
+ * @description Register user account and activate
+ * @param {Object} payload HTTP request body
+ * @async
+ */
+const activate = async (payload) => {
+  const { signupToken } = payload;
+  const { result, success } = verifyJWT(signupToken); // <- decode signup token
+  if (!success) return { result, success };
+  const { firstName, lastName, username, email, password } = result;
 
-//   try {
-//     const newNomad = await nomad.save();
-//     return;
-//   } catch (error) {
-//     return { result: error.message, success: false };
-//   }
-// };
+  // save user into db
+  const nomad = new Nomad({
+    first_name: firstName,
+    last_name: lastName,
+    username: decrypt(username),
+    email: decrypt(email),
+    password: decrypt(password),
+  });
+
+  try {
+    const newNomad = await nomad.save();
+    newNomad.encry_password = undefined;
+    newNomad.salt = undefined;
+    return { result: newNomad, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
 
 // TODO: Sign in
 const signin = (payload) => {
@@ -65,7 +84,9 @@ const signin = (payload) => {
 
       const { _id, first_name, last_name, username, email } = nomad;
       // Create the Auth token
-      const token = jwt.sign({ id: _id }, process.env.SECRET);
+      const { result, success } = signJWT({ id: _id });
+      if (!success) return { result, success };
+      const token = result;
 
       return {
         msg: "Signin Successful",
@@ -91,6 +112,6 @@ const signin = (payload) => {
 
 module.exports = {
   signup,
-  // activate,
+  activate,
   signin,
 };

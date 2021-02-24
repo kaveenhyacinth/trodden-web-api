@@ -1,7 +1,15 @@
-const { signup, signin } = require("../services/AuthenticationService");
+const {
+  signup,
+  activate,
+  signin,
+} = require("../services/AuthenticationService");
 const { validationResult } = require("express-validator");
 
-// Signup a user
+/**
+ * @description Sent verification mail on sign-up
+ * @param {HTTP} req
+ * @param {HTTP} res
+ */
 const signupController = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(422).json(errors);
@@ -24,13 +32,42 @@ const signupController = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       msg: "Internal server error @signupController",
-      err: error,
+      err: error.message,
       success: false,
     });
   }
 };
 
-// signin a user
+/**
+ * @description Register user account and activate
+ * @param {HTTP} req
+ * @param {HTTP} res
+ */
+const activateAccountController = async (req, res) => {
+  try {
+    const { result, success } = await activate(req.body);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "You have been registered successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @activateAccountController",
+      err: error.message,
+      success: false,
+    });
+  }
+};
+
+// TODO: signin a user
 const signinController = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(422).json(errors);
@@ -52,7 +89,7 @@ const signinController = async (req, res) => {
   }
 };
 
-// signout
+// TODO: signout
 const signoutController = (req, res) => {
   try {
     req.profile = undefined;
@@ -67,6 +104,7 @@ const signoutController = (req, res) => {
 
 module.exports = {
   signupController,
+  activateAccountController,
   signinController,
   signoutController,
 };
