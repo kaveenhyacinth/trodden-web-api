@@ -32,7 +32,9 @@ app.use("/api/caravan", caravanRoute);
 app.use("/api/blaze", blazeRoute);
 
 // Server instance
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () =>
-  console.log(`⚡ [server] APP IS RUNNING ON PORT ${PORT}`)
+  console.log(
+    `⚡ [server] Server is running on ${PORT} in ${process.env.NODE_ENV} mode`
+  )
 );

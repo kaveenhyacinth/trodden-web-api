@@ -1,7 +1,7 @@
 const Caravan = require("../models/Caravan");
 const Blaze = require("../models/Blaze");
 
-//#region CARAVAN METHODS
+//#region CARAVAN
 
 /**
  * @description Get a specific Caravan by its id
@@ -138,7 +138,7 @@ const deleteCaravan = (caravanId, ownerId) => {
 };
 //#endregion
 
-//#region BLAZE METHODS
+//#region BLAZE
 
 // TODO: Create new blaze
 const createBlaze = async (ownerId, imageData, payload) => {

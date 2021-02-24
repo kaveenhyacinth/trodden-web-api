@@ -11,7 +11,6 @@ const {
 // TODO: Create new blaze
 const createBlazeController = async (req, res) => {
   try {
-    console.log("inside create blaze")
     const ownerId = req.auth.id;
     const imageData = req.file;
     const payload = req.body;

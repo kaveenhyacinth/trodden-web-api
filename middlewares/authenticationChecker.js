@@ -9,9 +9,12 @@ const isSignedIn = expressJwt({
 
 // check whether the user is authenticated or not
 const isAuthenticated = (req, res, next) => {
-  if (!req.auth.id) {
+  const isOwner = req.auth.id == req.body.userId || req.auth.id == req.params["userId"];
+  if (!isOwner) {
     return res.status(403).json({
-      error: "ACCESS DENIED @isAutheticated!",
+      result: null,
+      success: false,
+      msg: "ACCESS DENIED",
     });
   }
   next();
