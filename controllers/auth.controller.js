@@ -1,14 +1,16 @@
+const { validationResult } = require("express-validator");
 const {
   signup,
   activate,
   signin,
+  refresh,
 } = require("../services/AuthenticationService");
-const { validationResult } = require("express-validator");
 
 /**
  * @description Sent verification mail on sign-up
  * @param {HTTP} req
  * @param {HTTP} res
+ * @async
  */
 const signupController = async (req, res) => {
   const errors = validationResult(req);
@@ -42,6 +44,7 @@ const signupController = async (req, res) => {
  * @description Register user account and activate
  * @param {HTTP} req
  * @param {HTTP} res
+ * @async
  */
 const activateAccountController = async (req, res) => {
   try {
@@ -60,36 +63,64 @@ const activateAccountController = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
+      result,
+      success,
       msg: "Internal server error @activateAccountController",
-      err: error.message,
-      success: false,
     });
   }
 };
 
-// TODO: signin a user
+/**
+ * @description Sign-in user
+ * @param {HTTP} req
+ * @param {HTTP} res
+ * @async
+ */
 const signinController = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(422).json(errors);
 
   try {
-    const { result, msg, token, success } = await signin(req.body);
-    if (!success) {
-      return res.status(400).json({ msg, success });
-    }
+    const { result, success } = await signin(req.body);
+    if (!success) return res.status(400).json({ result, success });
     console.log("@SigninController", success); // <-- clg
-    return (
-      res
-        .status(200)
-        // .cookie("token", token, { expire: new Date() + 29 })
-        .json({ msg, result, token, success })
-    );
+
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Singned in successfully",
+    });
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(500).json({
+      result,
+      success,
+      msg: "Internal server error @signinController",
+    });
   }
 };
 
-// TODO: signout
+/**
+ * @description Send a new sign token and new refresh token
+ * @param {HTTP} req
+ * @param {HTTP} res
+ */
+const refreshTokenController = (req, res) => {
+  const { result, success } = refresh(req.body);
+  if (!success) {
+    return res.status(401).json({
+      result,
+      success,
+      msg: result,
+    });
+  }
+  return res.status(200).json({
+    result,
+    success,
+    msg: "New tokens",
+  });
+};
+
+// FIXME: signout
 const signoutController = (req, res) => {
   try {
     req.profile = undefined;
@@ -106,5 +137,6 @@ module.exports = {
   signupController,
   activateAccountController,
   signinController,
+  refreshTokenController,
   signoutController,
 };
