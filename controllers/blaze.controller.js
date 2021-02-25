@@ -8,13 +8,15 @@ const {
   deleteBlaze,
 } = require("../services/CommunityService");
 
-// TODO: Create new blaze
+/**
+ * @description Create new blaze
+ * @param {HTTP} req
+ * @param {HTTP} res
+ * @async
+ */
 const createBlazeController = async (req, res) => {
   try {
-    const ownerId = req.auth.id;
-    const imageData = req.file;
-    const payload = req.body;
-    const { result, success } = await createBlaze(ownerId, imageData, payload);
+    const { result, success } = await createBlaze(req.body, req?.file);
     if (!success) {
       return res.status(400).json({
         result,

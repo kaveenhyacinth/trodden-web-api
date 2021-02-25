@@ -137,37 +137,40 @@ const deleteCaravan = (userId, caravanId) => {
 
 //#region BLAZE
 
-// TODO: Create new blaze
-const createBlaze = async (ownerId, imageData, payload) => {
-  const { path } = imageData;
-  const { caravan, title, desc } = payload;
+/**
+ * @description Create new blaze
+ * @param {Object} payload Http request body
+ * @param {Object} imageData Http request file by multer
+ * @async
+ */
+const createBlaze = async (payload, imageData) => {
+  const { userId, caravanId, title, desc } = payload;
 
   // check if caravan is owned by the ownerId
   try {
     const caravanOwner = await Caravan.findOne({
-      _id: caravan,
-      owner: ownerId,
+      _id: caravanId,
+      owner: userId,
     });
 
     // if not return
-    if (!caravanOwner) return { result: "Unauthorized Action", success: false };
+    if (!caravanOwner) throw new Error("Unauthorized Action");
 
     // if so create the new blaze
     const blaze = new Blaze({
-      caravan,
+      caravan: caravanId,
       title,
       desc,
-      image: path,
-      participants: ownerId,
+      image: imageData.path ?? "",
+      participants: userId,
     });
-    const result = blaze
-      .save()
-      .then((result) => ({ result, success: true }))
-      .catch((err) => ({ result: err, success: false }));
+    const newBlaze = await blaze.save();
+    if (!newBlaze)
+      throw new Error("Something went wrong while saving blaze @service");
 
-    return result;
+    return { result: newBlaze, success: true };
   } catch (error) {
-    return { result: error, success: false };
+    return { result: error.message, success: false };
   }
 };
 

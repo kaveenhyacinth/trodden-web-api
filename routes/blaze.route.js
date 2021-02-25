@@ -1,7 +1,7 @@
+//#region  IMPORTS
 const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/multerUploader");
-
 const {
   isAuthenticated,
   isSignedIn,
@@ -15,8 +15,19 @@ const {
   markAsGoingToBlazeController,
   deleteBlazeController,
 } = require("../controllers/blaze.controller");
+//#endregion
 
-router.post("/new", isSignedIn, isAuthenticated, upload.single("image"), createBlazeController);
+/**
+ * @description Create new blaze
+ * @name post/createBlaze
+ */
+router.post(
+  "/new",
+  isSignedIn,
+  isAuthenticated,
+  upload.single("image"),
+  createBlazeController
+);
 
 router.get("/", isSignedIn, getRecentBlazesController);
 router.get("/i/:blazeId", isSignedIn, getBlazeByIdController);
