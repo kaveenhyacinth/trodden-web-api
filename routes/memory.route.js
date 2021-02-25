@@ -2,32 +2,37 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/multerUploader");
 
-// const tokenDecoder = require("../middlewares/tokenDecoder");
+//#region IMPORTS
 const {
   isAuthenticated,
   isSignedIn,
 } = require("../middlewares/authenticationChecker");
 const {
-  getMemosController,
-  getMemoByUserController,
+  getMemosByUserController,
   createMemoController,
   updateMemoController,
   deleteMemoController,
   commentOnMemoController,
   heatOnMemoryController,
 } = require("../controllers/memory.controller");
+//#endregion
 
 /**
  * @description Get all memories of the signed user : Protected
- * @name get/memories
+ * @name get/memoriesByOwner
  */
-router.get("/", isSignedIn, isAuthenticated, getMemosController);
+router.get(
+  "/my/:userId",
+  isSignedIn,
+  isAuthenticated,
+  getMemosByUserController
+);
 
 /**
  * @description Get all memories of a specific user
  * @name get/memoriesByUser
  */
-router.get("/:userId", getMemoByUserController);
+router.get("/fetch/:userId", isSignedIn, getMemosByUserController);
 
 /**
  * @description create a new memory : Protected
@@ -45,34 +50,29 @@ router.post(
  * @description update an existing memory : Protected
  * @name put/updateMemory
  */
-router.put(
-  "/update/:postId",
-  isSignedIn,
-  isAuthenticated,
-  updateMemoController
-);
+router.put("/update", isSignedIn, isAuthenticated, updateMemoController);
 
 /**
  * @description Comment on a memory
- * @name put/commmentOnMemory
+ * @name patch/commmentOnMemory
  */
-router.put("/comment", isSignedIn, isAuthenticated, commentOnMemoController);
+router.patch("/comment", isSignedIn, isAuthenticated, commentOnMemoController);
 
 /**
  * @description React on a memory
  * @name patch/heatOnMemory
  */
-router.patch(
-  "/heat/:postId",
-  isSignedIn,
-  isAuthenticated,
-  heatOnMemoryController
-);
+router.patch("/heat", isSignedIn, isAuthenticated, heatOnMemoryController);
 
 /**
  * @description delete an existing memory : Protected
  * @name delete/deleteMemory
  */
-router.delete("/:postId", isSignedIn, isAuthenticated, deleteMemoController);
+router.delete(
+  "/rm/:userId/:postId",
+  isSignedIn,
+  isAuthenticated,
+  deleteMemoController
+);
 
 module.exports = router;

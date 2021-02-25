@@ -1,6 +1,5 @@
 const {
-  getMemos,
-  getMemoByUser,
+  getMemosByUser,
   createMemo,
   updateMemo,
   deleteMemo,
@@ -9,44 +8,15 @@ const {
 } = require("../services/ContentService");
 
 /**
- * @description Get all the memories which belong to the current user
- * @param {Object} req HTTP request
- * @param {Object} res HTTP response
- */
-const getMemosController = async (req, res) => {
-  try {
-    const ownerId = req.auth.id;
-    const { result, success } = await getMemos(ownerId);
-    if (!success) {
-      return res.status(400).json({
-        result,
-        success,
-        msg: "Something went wrong while fetching your memories",
-      });
-    }
-    return res.status(200).json({
-      result,
-      success,
-      msg: "Memories has been fetched successfully",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      msg: "Internal server error @getMemosController",
-      err: error,
-      success: false,
-    });
-  }
-};
-
-/**
  * @description Get all the memories which belong to a specific user
- * @param {Object} req HTTP request
- * @param {Object} res HTTP response
+ * @param {HTTP} req HTTP request
+ * @param {HTTP} res HTTP response
+ * @async
  */
-const getMemoByUserController = async (req, res) => {
+const getMemosByUserController = async (req, res) => {
   try {
-    const userId = req.params["userId"];
-    const { result, success } = await getMemoByUser(userId);
+    const userId = req.params.userId;
+    const { result, success } = await getMemosByUser(userId);
     if (!success) {
       return res.status(400).json({
         result,
@@ -57,11 +27,11 @@ const getMemoByUserController = async (req, res) => {
     return res.status(200).json({
       result,
       success,
-      msg: "Memories has been fetched successfully",
+      msg: "Memories have been fetched successfully",
     });
   } catch (error) {
     return res.status(500).json({
-      msg: "Internal server error @getMemoByUserController",
+      msg: "Internal server error @getMemosByUserController",
       err: error,
       success: false,
     });
@@ -70,14 +40,14 @@ const getMemoByUserController = async (req, res) => {
 
 /**
  * @description Create a new memory
- * @param {Object} req HTTP request
- * @param {Object} res HTTP response
+ * @param {HTTP} req HTTP request
+ * @param {HTTP} res HTTP response
+ * @async
  */
 const createMemoController = async (req, res) => {
   try {
-    const ownerId = req.auth.id;
     console.log("Image: " + req.file);
-    const { result, success } = await createMemo(ownerId, req.body, req.file);
+    const { result, success } = await createMemo(req.body, req.file);
     if (!success) {
       return res.status(400).json({
         result,
@@ -88,8 +58,7 @@ const createMemoController = async (req, res) => {
     return res.status(201).json({
       result,
       success,
-      msg: "Memories has been created successfully",
-      // file: req.file
+      msg: "Memory has been created successfully",
     });
   } catch (error) {
     return res.status(500).json({
@@ -102,14 +71,13 @@ const createMemoController = async (req, res) => {
 
 /**
  * @description Update a created memory details
- * @param {Object} req HTTP request
- * @param {Object} res HTTP response
+ * @param {HTTP} req HTTP request
+ * @param {HTTP} res HTTP response
+ * @async
  */
 const updateMemoController = async (req, res) => {
   try {
-    const postId = req.params["postId"];
-    const ownerId = req.auth.id;
-    const { result, success } = await updateMemo(postId, ownerId, req.body);
+    const { result, success } = await updateMemo(req.body);
     if (!success) {
       return res.status(400).json({
         result,
@@ -133,13 +101,14 @@ const updateMemoController = async (req, res) => {
 
 /**
  * @description Delete a created memory details
- * @param {Object} req HTTP request
- * @param {Object} res HTTP response
+ * @param {HTTP} req HTTP request
+ * @param {HTTP} res HTTP response
+ * @async
  */
 const deleteMemoController = async (req, res) => {
   try {
-    const postId = req.params["postId"];
-    const ownerId = req.auth.id;
+    const postId = req.params.postId;
+    const ownerId = req.params.userId;
     const { result, success } = await deleteMemo(postId, ownerId);
     if (!success) {
       return res.status(400).json({
@@ -164,13 +133,13 @@ const deleteMemoController = async (req, res) => {
 
 /**
  * @description Post a comment for a specific memory
- * @param {Object} req HTTP request
- * @param {Object} res HTTP response
+ * @param {HTTP} req HTTP request
+ * @param {HTTP} res HTTP response
+ * @async
  */
 const commentOnMemoController = async (req, res) => {
   try {
-    const commentorId = req.auth.id;
-    const { result, success } = await commentOnMemo(commentorId, req.body);
+    const { result, success } = await commentOnMemo(req.body);
     if (!success) {
       return res.status(400).json({
         result,
@@ -194,14 +163,13 @@ const commentOnMemoController = async (req, res) => {
 
 /**
  * @description React for a specific memory
- * @param {Object} req HTTP request
- * @param {Object} res HTTP response
+ * @param {HTTP} req HTTP request
+ * @param {HTTP} res HTTP response
+ * @async
  */
 const heatOnMemoryController = async (req, res) => {
   try {
-    const heaterId = req.auth.id;
-    const postId = req.param["postId"];
-    const { result, success } = await heatOnMemory(heaterId, postId);
+    const { result, success } = await heatOnMemory(req.body);
     if (!success) {
       return res.status(400).json({
         result,
@@ -224,8 +192,7 @@ const heatOnMemoryController = async (req, res) => {
 };
 
 module.exports = {
-  getMemosController,
-  getMemoByUserController,
+  getMemosByUserController,
   createMemoController,
   updateMemoController,
   deleteMemoController,
