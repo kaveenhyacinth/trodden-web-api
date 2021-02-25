@@ -45,7 +45,7 @@ app.all("*", (req, res) => {
   res.status(404).json({
     result: "404",
     success: false,
-    msg: "404! page not found"
+    msg: "404! page not found",
   });
 });
 
