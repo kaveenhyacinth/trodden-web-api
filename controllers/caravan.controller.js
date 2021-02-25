@@ -1,3 +1,4 @@
+const { suggestCaravansByInterests } = require("../services/SuggestionService");
 const {
   createCaravan,
   getCaravanById,
@@ -7,7 +8,6 @@ const {
   updateCaravan,
   deleteCaravan,
 } = require("../services/CommunityService");
-const { suggestCaravansByInterests } = require("../services/SuggestionService");
 
 /**
  * @description Get a caravan by its id
@@ -16,8 +16,7 @@ const { suggestCaravansByInterests } = require("../services/SuggestionService");
  */
 const getCaravanByIdController = async (req, res) => {
   try {
-    console.log("inside getcaravanby id")
-    const caravanId = req.params["caravanId"];
+    const caravanId = req.params.caravanId;
     const { result, success } = await getCaravanById(caravanId);
     if (!success) {
       return res.status(400).json({
@@ -47,8 +46,8 @@ const getCaravanByIdController = async (req, res) => {
  */
 const getCaravansByOwnerController = async (req, res) => {
   try {
-    const ownerId = req.auth.id;
-    const { result, success } = await getCaravansByOwner(ownerId);
+    const userId = req.params.userId;
+    const { result, success } = await getCaravansByOwner(userId);
     if (!success) {
       return res.status(400).json({
         result,
@@ -77,7 +76,7 @@ const getCaravansByOwnerController = async (req, res) => {
  */
 const getCaravansByUserController = async (req, res) => {
   try {
-    const userId = req.auth.id;
+    const userId = req.params.userId;
     const { result, success } = await getCaravansByUser(userId);
     if (!success) {
       return res.status(400).json({
@@ -100,10 +99,14 @@ const getCaravansByUserController = async (req, res) => {
   }
 };
 
-// TODO: get caravans by interests controller
+/**
+ * @description Get caravans by interests
+ * @param {Object} req
+ * @param {Object} res
+ */
 const getCaravansByInterestsController = async (req, res) => {
   try {
-    const userId = req.auth.id;
+    const userId = req.params.userId;
     const { result, success } = await suggestCaravansByInterests(userId);
     if (!success) {
       return res.status(400).json({
@@ -135,12 +138,7 @@ const getCaravansByInterestsController = async (req, res) => {
  */
 const createCaravanController = async (req, res) => {
   try {
-    const ownerId = req.auth.id;
-    const { result, success } = await createCaravan(
-      ownerId,
-      req.file,
-      req.body
-    );
+    const { result, success } = await createCaravan(req.body, req.file);
     if (!success) {
       return res.status(400).json({
         result,
@@ -169,9 +167,7 @@ const createCaravanController = async (req, res) => {
  */
 const connectToCaravanController = async (req, res) => {
   try {
-    const caravanId = req.params["caravanId"];
-    const userId = req.auth.id;
-    const { result, success } = await connectToCaravan(caravanId, userId);
+    const { result, success } = await connectToCaravan(payload);
     if (!success) {
       return res.status(400).json({
         result,
@@ -200,13 +196,7 @@ const connectToCaravanController = async (req, res) => {
  */
 const updateCaravanController = async (req, res) => {
   try {
-    const caravanId = req.params["caravanId"];
-    const ownerId = req.auth.id;
-    const { result, success } = await updateCaravan(
-      caravanId,
-      ownerId,
-      req.body
-    );
+    const { result, success } = await updateCaravan(req.body);
     if (!success) {
       return res.status(400).json({
         result,
@@ -237,9 +227,9 @@ const updateCaravanController = async (req, res) => {
  */
 const deleteCaravanController = async (req, res) => {
   try {
-    const caravanId = req.params["caravanId"];
-    const ownerId = req.auth.id;
-    const { result, success } = await deleteCaravan(caravanId, ownerId);
+    const userId = req.params.userId;
+    const caravanId = req.params.caravanId;
+    const { result, success } = await deleteCaravan(userId, caravanId);
     if (!success) {
       return res.status(400).json({
         result,

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/multerUploader");
 
+//#region IMPORTS
 const {
   isAuthenticated,
   isSignedIn,
@@ -16,22 +17,46 @@ const {
   updateCaravanController,
   deleteCaravanController,
 } = require("../controllers/caravan.controller");
+//#endregion
 
-router.get("/own", isSignedIn, isAuthenticated, getCaravansByOwnerController);
-router.get("/my", isSignedIn, isAuthenticated, getCaravansByUserController);
+/**
+ * @description Get a caravan by its id
+ * @name get/caravanById
+ */
+router.get("/fetch/:caravanId", isSignedIn, getCaravanByIdController);
+
+/**
+ * @description Get a caravan by its owner
+ * @name get/caravansByOwner
+ */
 router.get(
-  "/sug",
+  "/own/:userId",
   isSignedIn,
   isAuthenticated,
-  getCaravansByInterestsController
-);
-router.get(
-  "/fetch/:caravanId",
-  isSignedIn,
-  isAuthenticated,
-  getCaravanByIdController
+  getCaravansByOwnerController
 );
 
+/**
+ * @description Get caravans where a specific user is connected
+ * @name get/caravansByUser
+ */
+router.get(
+  "/my/:userId",
+  isSignedIn,
+  isAuthenticated,
+  getCaravansByUserController
+);
+
+/**
+ * @description Get caravans by interests
+ * @name get/caravansByInterests
+ */
+router.get("/sug/:userId", isSignedIn, getCaravansByInterestsController);
+
+/**
+ * @description Create a caravan
+ * @name post/createCaravan
+ */
 router.post(
   "/new",
   isSignedIn,
@@ -40,21 +65,24 @@ router.post(
   createCaravanController
 );
 
-router.patch(
-  "/join/:caravanId",
-  isSignedIn,
-  isAuthenticated,
-  connectToCaravanController
-);
-router.put(
-  "/update/:caravanId",
-  isSignedIn,
-  isAuthenticated,
-  updateCaravanController
-);
+/**
+ * @description Connect with a caravan
+ * @name patch/joinCaravan
+ */
+router.patch("/join", isSignedIn, isAuthenticated, connectToCaravanController);
 
+/**
+ * @description Update a caravan meta
+ * @name put/updateCaravan
+ */
+router.put("/update", isSignedIn, isAuthenticated, updateCaravanController);
+
+/**
+ * @description Delete a caravan
+ * @name delete/deleteCaravan
+ */
 router.delete(
-  "/delete/:caravanId",
+  "/rm/:userId/:caravanId",
   isSignedIn,
   isAuthenticated,
   deleteCaravanController

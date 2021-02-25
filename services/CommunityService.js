@@ -18,10 +18,10 @@ const getCaravanById = (caravanId) => {
 
 /**
  * @description Get all Caravans which are owned by a user
- * @param {ObjectId} ownerId Caravan owner id
+ * @param {ObjectId} userId Caravan owner id
  */
-const getCaravansByOwner = (ownerId) => {
-  return Caravan.find({ owner: ownerId })
+const getCaravansByOwner = (userId) => {
+  return Caravan.find({ owner: userId })
     .populate({ path: "owner", select: "_id first_name last_name prof_img" })
     .populate({ path: "nomads", select: "_id first_name last_name prof_img" })
     .then((caravan) => ({ result: caravan, success: true }))
@@ -42,21 +42,20 @@ const getCaravansByUser = (userId) => {
 
 /**
  * @description Create a new Caravan
- * @param {ObjectId} ownerId Caravan creator's id
- * @param {Obejct} imageData req.file of multer object
  * @param {Object} payload HTTP request body
+ * @param {Obejct} imageData req.file of multer object
  */
-const createCaravan = (ownerId, imageData, payload) => {
-  const { caravanName, description, interests } = payload;
+const createCaravan = (payload, imageData) => {
+  const { userId, caravanName, description, interests } = payload;
   const { path } = imageData;
 
   const caravan = new Caravan({
-    owner: ownerId,
+    owner: userId,
     caravan_name: caravanName,
     desc: description,
-    interests: interests,
+    interests,
     display_img: path,
-    nomads: ownerId,
+    nomads: userId,
   });
 
   const result = caravan
@@ -69,11 +68,11 @@ const createCaravan = (ownerId, imageData, payload) => {
 
 /**
  * @description Connect a user to a caravan
- * @param {ObjectId} caravanId Caravan that is to be connected with
- * @param {ObjectId} userId User that is to be connected with
+ * @param {Object} payload HTTP request body
  */
-const connectToCaravan = async (caravanId, userId) => {
+const connectToCaravan = async (payload) => {
   try {
+    const { userId, caravanId } = payload;
     const caravan = await Caravan.findById(caravanId);
     const isOwner = caravan.owner == userId ? true : false;
     if (isOwner)
@@ -100,15 +99,13 @@ const connectToCaravan = async (caravanId, userId) => {
 
 /**
  * @description Update a Caravan
- * @param {ObjectId} caravanId Caravan that is to be updated
- * @param {ObjectId} ownerId Caravan owner id
  * @param {Object} payload HTTP request body
  */
-const updateCaravan = (caravanId, ownerId, payload) => {
-  const { caravanName, desc, interests } = payload;
+const updateCaravan = (payload) => {
+  const { userId, caravanId, caravanName, desc, interests } = payload;
 
   return Caravan.findOneAndUpdate(
-    { _id: caravanId, owner: ownerId },
+    { _id: caravanId, owner: userId },
     {
       $set: { caravan_name: caravanName, desc, interests },
     },
@@ -126,11 +123,11 @@ const updateCaravan = (caravanId, ownerId, payload) => {
 
 /**
  * @description Delete a Caravan
+ * @param {ObjectId} userId Caravan owner id
  * @param {ObjectId} caravanId Caravan that is to be deleted
- * @param {ObjectId} ownerId Caravan owner id
  */
-const deleteCaravan = (caravanId, ownerId) => {
-  return Caravan.findOneAndDelete({ _id: caravanId, owner: ownerId })
+const deleteCaravan = (userId, caravanId) => {
+  return Caravan.findOneAndDelete({ _id: caravanId, owner: userId })
     .then((result) =>
       result === null ? { result, success: false } : { result, success: true }
     )
