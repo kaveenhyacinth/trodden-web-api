@@ -53,7 +53,7 @@ router.post(
  * @description activate and register user
  * @name post/activate
  */
-router.post("/activate", activateAccountController);
+router.post("/activate", checkEmail, checkUsername, activateAccountController);
 
 /**
  * @description Sign-in user

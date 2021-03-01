@@ -13,8 +13,9 @@ const {
  * @async
  */
 const signupController = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(422).json(errors);
+  const isError = validationResult(req);
+  if (!isError.isEmpty())
+    return res.status(422).json({ result: isError.array(), success: false });
 
   try {
     const { result, success } = await signup(req.body);
@@ -53,7 +54,7 @@ const activateAccountController = async (req, res) => {
       return res.status(400).json({
         result,
         success,
-        msg: result,
+        msg: "Couldn't register user. Please Try again later",
       });
     }
     return res.status(200).json({
@@ -63,8 +64,8 @@ const activateAccountController = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      result,
-      success,
+      result: null,
+      success: false,
       msg: "Internal server error @activateAccountController",
     });
   }
@@ -77,8 +78,9 @@ const activateAccountController = async (req, res) => {
  * @async
  */
 const signinController = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(422).json(errors);
+  const isError = validationResult(req);
+  if (!isError.isEmpty())
+    return res.status(422).json({ result: isError.array(), success: false });
 
   try {
     const { result, success } = await signin(req.body);

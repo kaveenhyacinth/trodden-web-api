@@ -2,7 +2,7 @@ const expressJwt = require("express-jwt");
 
 // Saving and signin to auth object in req
 const isSignedIn = expressJwt({
-  secret: process.env.SUPER_SECRET,
+  secret: process.env.SIGN_TOKEN_SECRET,
   userProperty: "auth",
   algorithms: ["sha1", "RS256", "HS256"],
 });
