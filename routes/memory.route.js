@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../middlewares/multerUploader");
+const {upload} = require("../jobs/FileStorageEngine");
 
 //#region IMPORTS
 const {
@@ -41,8 +41,8 @@ router.get("/fetch/:userId", isSignedIn, getMemosByUserController);
 router.post(
   "/new",
   isSignedIn,
-  isAuthenticated,
   upload.single("images"),
+  isAuthenticated,
   createMemoController
 );
 

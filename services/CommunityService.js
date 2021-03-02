@@ -47,14 +47,14 @@ const getCaravansByUser = (userId) => {
  */
 const createCaravan = (payload, imageData) => {
   const { userId, caravanName, description, interests } = payload;
-  const { path } = imageData;
+  const { filename } = imageData;
 
   const caravan = new Caravan({
     owner: userId,
     caravan_name: caravanName,
     desc: description,
     interests,
-    display_img: path,
+    display_img: filename,
     nomads: userId,
   });
 
@@ -161,7 +161,7 @@ const createBlaze = async (payload, imageData) => {
       caravan: caravanId,
       title,
       desc,
-      image: imageData.path ?? "",
+      image: imageData.filename ?? "",
       participants: userId,
     });
     const newBlaze = await blaze.save();

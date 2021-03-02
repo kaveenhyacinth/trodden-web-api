@@ -1,7 +1,7 @@
 //#region  IMPORTS
 const express = require("express");
 const router = express.Router();
-const upload = require("../middlewares/multerUploader");
+const {upload} = require("../jobs/FileStorageEngine");
 const {
   isAuthenticated,
   isSignedIn,
@@ -24,8 +24,8 @@ const {
 router.post(
   "/new",
   isSignedIn,
-  isAuthenticated,
   upload.single("image"),
+  isAuthenticated,
   createBlazeController
 );
 

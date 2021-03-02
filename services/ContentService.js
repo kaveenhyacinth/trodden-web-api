@@ -61,7 +61,7 @@ const checkAndCreateHashtags = (content) => {
  */
 const createMemo = (payload, imageData) => {
   const { userId, content, destination } = payload;
-  const { path } = imageData;
+  const { filename } = imageData;
 
   // Check and create hashtags
   try {
@@ -72,7 +72,7 @@ const createMemo = (payload, imageData) => {
       content,
       destination,
       tags,
-      images: [path],
+      images: [filename],
     });
 
     const result = memory

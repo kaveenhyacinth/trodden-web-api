@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../middlewares/multerUploader");
+const {upload} = require("../jobs/FileStorageEngine");
 
 //#region IMPORTS
 const {
@@ -60,8 +60,8 @@ router.get("/sug/:userId", isSignedIn, getCaravansByInterestsController);
 router.post(
   "/new",
   isSignedIn,
-  isAuthenticated,
   upload.single("image"),
+  isAuthenticated,
   createCaravanController
 );
 
