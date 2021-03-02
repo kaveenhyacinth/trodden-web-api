@@ -1,9 +1,8 @@
+//#region IMPORTS
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
-
-//#region IMPORTS
-const upload = require("../middlewares/multerUploader");
+const {upload} = require("../jobs/FileStorageEngine")
 const {
   getProfileByIdController,
   setUpProfileController,
@@ -38,8 +37,8 @@ router.get("/user/:userId", getProfileByIdController);
 router.put(
   "/setup",
   isSignedIn,
-  isAuthenticated,
   upload.single("image"),
+  isAuthenticated,
   setUpProfileController
 );
 

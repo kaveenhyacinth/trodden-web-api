@@ -25,13 +25,13 @@ const getProfilebyId = async (userId) => {
  */
 const setupProfile = async (payload, imageData) => {
   const { userId, bio, occupation, contact, interests } = payload;
-  const { path } = imageData;
+  const { filename } = imageData;
 
   try {
     const nomad = await Nomad.findByIdAndUpdate(
       userId,
       {
-        $set: { prof_img: path, prof_bio: bio, contact, occupation, role: 1 },
+        $set: { prof_img: filename, prof_bio: bio, contact, occupation, role: 1 },
         $addToSet: { interests },
       },
       { new: true }

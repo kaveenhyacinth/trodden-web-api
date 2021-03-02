@@ -16,6 +16,7 @@ app.use(cookieParser());
 app.use(cors());
 
 // Import routes
+const transportRoute = require("./routes/transport.route");
 const authRoute = require("./routes/auth.route");
 const profileRoute = require("./routes/profile.route");
 const interestRoute = require("./routes/interest.route");
@@ -24,6 +25,7 @@ const caravanRoute = require("./routes/caravan.route");
 const blazeRoute = require("./routes/blaze.route");
 
 // Routes
+app.use("/", transportRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/profile", profileRoute);
 app.use("/api/interests", interestRoute);
