@@ -19,15 +19,15 @@ const getInterestsController = async (req, res) => {
     const interests = await getInterests();
     return res
       .status(200)
-      .json({ msg: "Got interests", success: true, interests });
+      .json({ msg: "Got interests", success: true, result: interests });
   } catch (error) {
     return res
       .status(400)
-      .json({ msg: "Couldn't fetch interests", err: error, success: false });
+      .json({ msg: "Couldn't fetch interests", result: error, success: false });
   }
 };
 
 module.exports = {
   createInterestController,
-  getInterestsController
+  getInterestsController,
 };
