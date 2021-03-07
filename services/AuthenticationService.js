@@ -67,7 +67,7 @@ const activate = async (payload) => {
   try {
     const newNomad = await nomad.save();
     if (!newNomad) throw new Error("Couldn't save user to database");
-    const { _id, first_name, last_name, username, email } = newNomad;
+    const { _id, first_name, last_name, username, email, role } = newNomad;
 
     const signedRes = signJWT({ id: _id }); // <- Create the sign token
     if (!signedRes.success)
@@ -82,10 +82,7 @@ const activate = async (payload) => {
     return {
       result: {
         id: _id,
-        firstName: first_name,
-        lastName: last_name,
-        username,
-        email,
+        role,
         signToken,
         refToken,
       },
