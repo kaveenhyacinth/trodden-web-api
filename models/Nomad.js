@@ -42,9 +42,15 @@ const nomadSchema = new mongoose.Schema(
       type: String,
       maxlength: 160,
     },
+    gender: String,
+    birthdate: Date,
     prof_img: String,
     contact: String,
     occupation: String,
+    address: {
+      city: { type: String },
+      country: { type: String },
+    },
     location: {
       type: {
         type: String,
