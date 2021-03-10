@@ -2,7 +2,6 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
-const {upload} = require("../jobs/FileStorageEngine")
 const {
   getProfileByIdController,
   setUpProfileController,
@@ -37,7 +36,6 @@ router.get("/user/:userId", getProfileByIdController);
 router.put(
   "/setup",
   isSignedIn,
-  upload.single("image"),
   isAuthenticated,
   setUpProfileController
 );

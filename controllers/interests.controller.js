@@ -5,7 +5,7 @@ const {
 
 const createInterestController = async (req, res) => {
   try {
-    const result = await createInterest(req.body);
+    const result = await createInterest(req.body, req.file);
     return res.status(200).json(result);
   } catch (error) {
     return res

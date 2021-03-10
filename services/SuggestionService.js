@@ -15,26 +15,30 @@ const suggestCaravansByInterests = async (userId) => {
   }
 };
 
-const createInterest = (payload) => {
+const createInterest = async (payload, imageData) => {
   const { title, desc } = payload;
+  const { filename } = imageData;
 
   const interest = new Interest({
     title,
     desc,
+    image: filename,
   });
 
-  return interest
-    .save()
-    .then(() => ({ msg: "Interest Saved", success: true }))
-    .catch((err) => ({
+  try {
+    await interest.save();
+    return { msg: "Interest Saved", success: true };
+  } catch (err) {
+    return {
       err,
       msg: "Interest aborted",
       success: false,
-    }));
+    };
+  }
 };
 
 const getInterests = () => {
-  return Interest.find({})
+  return Interest.find({}).select("id title image")
     .then((interests) => interests)
     .catch((err) => err);
 };

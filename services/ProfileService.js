@@ -23,15 +23,37 @@ const getProfilebyId = async (userId) => {
  * @param {Object} payload HTTP request body
  * @param {Object} imageData HTTP request file (contains image data by multer)
  */
-const setupProfile = async (payload, imageData) => {
-  const { userId, bio, occupation, contact, interests } = payload;
-  const { filename } = imageData;
+const setupProfile = async (payload) => {
+  const {
+    userId,
+    bio,
+    occupation,
+    contact,
+    city,
+    country,
+    birthdate,
+    gender,
+    region,
+    interests,
+    filename,
+  } = payload;
 
   try {
     const nomad = await Nomad.findByIdAndUpdate(
       userId,
       {
-        $set: { prof_img: filename, prof_bio: bio, contact, occupation, role: 1 },
+        $set: {
+          prof_img: filename,
+          prof_bio: bio,
+          contact,
+          occupation,
+          city,
+          country,
+          region,
+          birthdate,
+          gender,
+          role: 1,
+        },
         $addToSet: { interests },
       },
       { new: true }
@@ -39,6 +61,12 @@ const setupProfile = async (payload, imageData) => {
     if (!nomad) {
       throw new Error("Couldn't find the user profile when updating");
     }
+
+    // Undefine sensetive data
+    nomad.encry_password = undefined;
+    nomad.salt = undefined;
+    nomad.__v = undefined;
+
     return { result: nomad, success: true };
   } catch (error) {
     return { result: error.message, success: false };

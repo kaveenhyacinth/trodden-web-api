@@ -29,15 +29,15 @@ router.post(
       .withMessage("Enter a value between 2 to 32 characters long"),
     check("lastName")
       .trim()
-      .isLength({ min: 3, max: 32 })
+      .isLength({ min: 2, max: 32 })
       .withMessage("Enter a value between 2 to 32 characters long"),
     check("username")
       .trim()
-      .isLength({ min: 4, max: 12 })
+      .isLength({ min: 5, max: 12 })
       .withMessage("Enter a value between 4 to 12 characters long"),
     check("password")
-      .isLength({ min: 6, max: 12 })
-      .withMessage("Enter a value between 6 to 12 characters long"),
+      .isLength({ min: 8, max: 12 })
+      .withMessage("Enter a value between 8 to 20 characters long"),
     check("email")
       .trim()
       .isEmail()

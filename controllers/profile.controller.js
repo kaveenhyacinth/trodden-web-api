@@ -34,7 +34,7 @@ const getProfileByIdController = async (req, res) => {
  */
 const setUpProfileController = async (req, res) => {
   try {
-    const result = await setupProfile(req.body, req.file);
+    const result = await setupProfile(req.body);
     return res
       .status(200)
       .json({ msg: "Updated successfully", result, success: true });

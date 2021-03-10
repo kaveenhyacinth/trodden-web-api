@@ -47,10 +47,9 @@ const nomadSchema = new mongoose.Schema(
     prof_img: String,
     contact: String,
     occupation: String,
-    address: {
-      city: { type: String },
-      country: { type: String },
-    },
+    city: String,
+    country: String,
+    region: String,
     location: {
       type: {
         type: String,
