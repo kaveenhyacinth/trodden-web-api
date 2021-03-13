@@ -5,10 +5,13 @@ const memorySchema = new mongoose.Schema(
   {
     owner: {
       type: ObjectId,
-      ref: "Nomad"
+      ref: "Nomad",
     },
     content: String,
-    destination: String,
+    destination: {
+      type: ObjectId,
+      ref: "Destination",
+    },
     tags: [String],
     heats: [
       {
@@ -25,7 +28,8 @@ const memorySchema = new mongoose.Schema(
         content: String,
       },
     ],
-    images: [String]
+    images: [String],
+    videos: [String],
   },
   { timestamps: true }
 );
