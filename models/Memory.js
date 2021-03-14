@@ -28,8 +28,16 @@ const memorySchema = new mongoose.Schema(
         content: String,
       },
     ],
-    images: [String],
-    videos: [String],
+    media: [
+      {
+        uri: {
+          type: String,
+        },
+        type: {
+          type: String,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

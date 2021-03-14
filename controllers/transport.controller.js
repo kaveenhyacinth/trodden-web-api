@@ -50,6 +50,25 @@ const downloadVideo = (req, res) => {
   });
 };
 
+const uploadImage = (req, res) => {
+  try {
+    if (!req.file)
+      return res
+        .status(400)
+        .json({ result: null, success: false, msg: "Images couldn't upload" });
+
+    return res.status(200).json({
+      result: req.file,
+      success: true,
+      msg: "Images has been uploaded",
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ result: null, success: false, msg: "Internal Server Error" });
+  }
+};
+
 const uploadImages = (req, res) => {
   try {
     if (!req.files)
@@ -69,15 +88,15 @@ const uploadImages = (req, res) => {
   }
 };
 
-const uploadVideo = (req, res) => {
+const uploadVideos = (req, res) => {
   try {
-    if (!req.file)
+    if (!req.files)
       return res
         .status(400)
         .json({ result: null, success: false, msg: "Video couldn't upload" });
 
     return res.status(200).json({
-      result: req.file.filename,
+      result: req.files,
       success: true,
       msg: "Video has been uploaded",
     });
@@ -91,6 +110,7 @@ const uploadVideo = (req, res) => {
 module.exports = {
   downloadImage,
   downloadVideo,
+  uploadImage,
   uploadImages,
-  uploadVideo,
+  uploadVideos,
 };

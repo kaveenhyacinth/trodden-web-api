@@ -46,10 +46,10 @@ const getMemosByUserController = async (req, res) => {
  */
 const createMemoController = async (req, res) => {
   try {
-    console.log("Image: " + req.file);
-    const { result, success } = await createMemo(req.body, req.file);
+    const { result, success } = await createMemo(req.body);
     if (!success) {
-      return res.status(400).json({
+      console.log("WTF!", result);
+      return res.status(422).json({
         result,
         success,
         msg: "Something went wrong while creating the memory",

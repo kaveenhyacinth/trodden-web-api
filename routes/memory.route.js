@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {upload} = require("../jobs/FileStorageEngine");
+const { upload } = require("../jobs/FileStorageEngine");
 
 //#region IMPORTS
 const {
@@ -38,13 +38,7 @@ router.get("/fetch/:userId", isSignedIn, getMemosByUserController);
  * @description create a new memory : Protected
  * @name post/createMemory
  */
-router.post(
-  "/new",
-  isSignedIn,
-  upload.single("images"),
-  isAuthenticated,
-  createMemoController
-);
+router.post("/new", isSignedIn, isAuthenticated, createMemoController);
 
 /**
  * @description update an existing memory : Protected

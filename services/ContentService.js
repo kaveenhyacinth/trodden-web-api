@@ -1,6 +1,7 @@
 // const fs = require("fs");
 const Memory = require("../models/Memory");
 const Tag = require("../models/Tag");
+const Destination = require("../models/Destination");
 
 /**
  * @description Fetch memories by a specific user
@@ -20,37 +21,63 @@ const getMemosByUser = (userId) => {
  * @description Check hashtags and create only if hashtags are unvailable
  * @param {String} content Content of the memory
  * @inner
+ * @returns Tags
  */
-const checkAndCreateHashtags = (content) => {
+const checkAndCreateHashtags = async (content) => {
   // extracts hashtags in the content
   const regexp = /(^|\s)#[a-zA-Z0-9][\w-]*\b/g;
   const result = content.match(regexp);
 
-  if (!result) {
-    return [];
-  }
+  if (!result) return [];
 
   /* Remove repeated tags using Set() | ref => https://www.javascripttutorial.net/array/javascript-remove-duplicates-from-array/ */
   const trimmedTags = result.map((text) => text.toLowerCase().trim());
   const tags = [...new Set(trimmedTags)];
 
-  // check their availability in the db
-  tags.map((tagString) => {
-    Tag.findOne({ tag_name: tagString }).then((res) => {
-      if (res) return [];
+  try {
+    // check their availability in the db
+    tags.map(async (tagString) => {
+      const result = await Tag.findOne({ tag_name: tagString });
+      if (result) return [];
 
       // store unavailable hashtags in the db
       const tag = new Tag({ tag_name: tagString });
-      tag
-        .save()
-        .then(() => console.log("Tag has been saved to database"))
-        .catch((err) => {
-          throw new Error("Error creating tag: " + err);
-        });
+      const newResult = await tag.save();
+      if (!newResult) throw new Error("Error creating tag");
     });
-  });
 
-  return tags;
+    return tags;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Check for destination and create one only if unavailable
+ * @param {Object} destination
+ * @inner
+ * @returns destination id
+ */
+const checkAndCreateDestination = async (destination) => {
+  try {
+    const result = await Destination.findOne({ des_ref: destination.id });
+    // Return if destination available
+    if (result) return result._id;
+
+    // Store if destination unavailable
+    const newDestination = new Destination({
+      des_name: destination.name,
+      des_ref: destination.id,
+      des_type: destination.types,
+    });
+
+    const newResult = await newDestination.save();
+    if (!newResult) throw new Error("Error while creating destination");
+
+    return newResult._id;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // FIXME: option to add multiple images
@@ -59,31 +86,33 @@ const checkAndCreateHashtags = (content) => {
  * @param {Object} payload Http request body
  * @param {Object} imageData Multer's req.fiile object
  */
-const createMemo = (payload, imageData) => {
-  const { userId, content, destination } = payload;
-  const { filename } = imageData;
+const createMemo = async (payload) => {
+  const { userId, content, media, destination } = payload;
 
-  // Check and create hashtags
   try {
-    const tags = checkAndCreateHashtags(content);
+    const tags = content !== "" ? await checkAndCreateHashtags(content) : [];
+
+    const des = destination.id
+      ? await checkAndCreateDestination(destination)
+      : null;
+
+    console.log("Try media:", media);
 
     const memory = new Memory({
       owner: userId,
       content,
-      destination,
+      destination: des,
       tags,
-      images: [filename],
+      media,
     });
 
-    const result = memory
-      .save()
-      .then((result) => {
-        if (!result) return { result, success: false };
-        return { result, success: true };
-      })
-      .catch((err) => ({ result: err, success: false }));
+    console.log("Memory Body to save:", memory);
 
-    return result;
+    const result = await memory.save();
+    console.log("Result:", result)
+    if (!result) return { result, success: false };
+
+    return { result, success: true };
   } catch (error) {
     return { result: error.message, success: false };
   }
