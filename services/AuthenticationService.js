@@ -107,25 +107,19 @@ const signin = async (payload) => {
     if (!nomad) throw new Error("Email is not valid or not a registered user");
     if (!nomad.authenticate(password)) throw new Error("Password is not valid");
 
-    const { _id, first_name, last_name, username, email: userEmail } = nomad;
-
-    const signedRes = signJWT({ id: _id }); // <- Create the sign token
+    const signedRes = signJWT({ id: nomad._id }); // <- Create the sign token
     if (!signedRes.success)
       return { result: signedRes.result, success: signedRes.success };
     const signToken = signedRes.result;
 
-    const refreshRes = refreshJWT({ id: _id }); // <- Create the refresh token
+    const refreshRes = refreshJWT({ id: nomad._id }); // <- Create the refresh token
     if (!refreshRes.success)
       return { result: refreshRes.result, success: refreshRes.success };
     const refToken = refreshRes.result;
 
     return {
       result: {
-        id: _id,
-        firstName: first_name,
-        lastName: last_name,
-        username,
-        email: userEmail,
+        id: nomad._id,
         signToken,
         refToken,
       },
@@ -158,7 +152,7 @@ const refresh = (payload) => {
     return { result: refreshRes.result, success: refreshRes.success };
   const refToken = refreshRes.result;
 
-  return { result: { signToken, refToken }, success: true };
+  return { result: { signToken, refToken, id }, success: true };
 };
 
 module.exports = {
