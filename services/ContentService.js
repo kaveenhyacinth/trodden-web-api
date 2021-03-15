@@ -13,6 +13,7 @@ const getMemosByUser = (userId) => {
     .populate({ path: "owner", select: "first_name last_name" })
     .populate({ path: "comments.commentor", select: "first_name last_name" })
     .populate({ path: "heats", select: "first_name last_name" })
+    .populate({ path: "destination" })
     .then((memos) => ({ result: memos, success: true }))
     .catch((err) => ({ result: err, success: false }));
 };
@@ -109,7 +110,7 @@ const createMemo = async (payload) => {
     console.log("Memory Body to save:", memory);
 
     const result = await memory.save();
-    console.log("Result:", result)
+    console.log("Result:", result);
     if (!result) return { result, success: false };
 
     return { result, success: true };
