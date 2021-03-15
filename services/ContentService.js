@@ -10,7 +10,7 @@ const Destination = require("../models/Destination");
 const getMemosByUser = (userId) => {
   return Memory.find({ owner: userId })
     .sort({ createdAt: -1 })
-    .populate({ path: "owner", select: "first_name last_name" })
+    .populate({ path: "owner", select: "first_name last_name prof_img" })
     .populate({ path: "comments.commentor", select: "first_name last_name" })
     .populate({ path: "heats", select: "first_name last_name" })
     .populate({ path: "destination" })
