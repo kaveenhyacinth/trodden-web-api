@@ -23,6 +23,7 @@ const interestRoute = require("./routes/interest.route");
 const memoryRoute = require("./routes/memory.route");
 const caravanRoute = require("./routes/caravan.route");
 const blazeRoute = require("./routes/blaze.route");
+const suggestionsRoute = require("./routes/suggestions.route");
 
 // Routes
 app.use("/", transportRoute);
@@ -32,6 +33,7 @@ app.use("/api/interests", interestRoute);
 app.use("/api/memories", memoryRoute);
 app.use("/api/caravan", caravanRoute);
 app.use("/api/blaze", blazeRoute);
+app.use("/api/sug", suggestionsRoute);
 
 /** Unauthorized error handler */
 app.use(function (err, req, res, next) {
