@@ -11,8 +11,8 @@ const getMemosByUser = (userId) => {
   return Memory.find({ owner: userId })
     .sort({ createdAt: -1 })
     .populate({ path: "owner", select: "first_name last_name prof_img" })
-    .populate({ path: "comments.commentor", select: "first_name last_name" })
-    .populate({ path: "heats", select: "first_name last_name" })
+    .populate({ path: "comments.commentor", select: "first_name last_name prof_img" })
+    .populate({ path: "heats", select: "first_name last_name prof_img" })
     .populate({ path: "destination" })
     .then((memos) => ({ result: memos, success: true }))
     .catch((err) => ({ result: err, success: false }));
