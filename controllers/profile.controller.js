@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const { getProfilebyId, setupProfile } = require("../services/ProfileService");
+const bonds = require("../services/CommunityService");
 
-// extract token and save current user to req.profile
 const getProfileByIdController = async (req, res) => {
   const userId = req.params.userId;
   try {
@@ -21,7 +21,7 @@ const getProfileByIdController = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       msg: "Internal server error @getProfileByIdController",
-      err: error,
+      result: error,
       success: false,
     });
   }
@@ -41,7 +41,128 @@ const setUpProfileController = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       msg: "Internal server error @set-up profile",
-      err: error,
+      result: error,
+      success: false,
+    });
+  }
+};
+
+const getIncomingBondRequestsController = async (req, res) => {
+  try {
+    const { result, success } = await bonds.getIncomingBondRequests(
+      req.params.userId
+    );
+    if (!success)
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Got incoming bond requests",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server erro while processing on bond requests actions",
+      result: error,
+      success: false,
+    });
+  }
+};
+
+const getOutgoingBondRequestsController = async (req, res) => {
+  try {
+    const { result, success } = await bonds.getOutgoingBondRequests(
+      req.params.userId
+    );
+    if (!success)
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Got outgoing bond requests",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server erro while processing on bond requests actions",
+      result: error,
+      success: false,
+    });
+  }
+};
+
+const placeBondRequestController = async (req, res) => {
+  try {
+    const { result, success } = await bonds.placeBondRequest(req.body);
+    if (!success)
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Places bond request",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server erro while processing on bond requests actions",
+      result: error,
+      success: false,
+    });
+  }
+};
+
+const confirmBondRequestController = async (req, res) => {
+  try {
+    const { result, success } = await bonds.confirmBondRequest(req.body);
+    if (!success)
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Confirmed bond request",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server erro while processing on bond requests actions",
+      result: error,
+      success: false,
+    });
+  }
+};
+
+const removeBondRequestController = async (req, res) => {
+  try {
+    const { result, success } = await bonds.removeBondRequest(
+      req.params.requestId
+    );
+    if (!success)
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Removed bond request",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server erro while processing on bond requests actions",
+      result: error,
       success: false,
     });
   }
@@ -50,4 +171,9 @@ const setUpProfileController = async (req, res) => {
 module.exports = {
   getProfileByIdController,
   setUpProfileController,
+  getIncomingBondRequestsController,
+  getOutgoingBondRequestsController,
+  placeBondRequestController,
+  confirmBondRequestController,
+  removeBondRequestController,
 };

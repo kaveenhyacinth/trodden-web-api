@@ -1,5 +1,74 @@
+const Bond = require("../models/BondRequest");
 const Caravan = require("../models/Caravan");
 const Blaze = require("../models/Blaze");
+const Nomad = require("../models/Nomad");
+
+//#region BOND
+const getIncomingBondRequests = async (userId) => {
+  try {
+    const result = Bond.find({ requestee: userId }).populate({
+      path: "owner",
+      select: "first_name last_name prof_img",
+    });
+    return { result, success: true };
+  } catch (error) {
+    return { result: error, success: false };
+  }
+};
+
+const getOutgoingBondRequests = async (userId) => {
+  try {
+    const result = Bond.find({ owner: userId }).populate({
+      path: "requestee",
+      select: "first_name last_name prof_img",
+    });
+    return { result, success: true };
+  } catch (error) {
+    return { result: error, success: false };
+  }
+};
+
+const placeBondRequest = async (payload) => {
+  try {
+    const { userId, requestee } = payload;
+    const newBondrequest = new Bond({
+      owner: userId,
+      requestee,
+    });
+    const result = await newBondrequest.save();
+    if (!result) return { result, success: false };
+    return { result, success: true };
+  } catch (error) {
+    return { result: error, success: false };
+  }
+};
+
+const confirmBondRequest = async (payload) => {
+  try {
+    const { userId, requestId, requestorId } = payload;
+    // save requestee in tribe
+    const result = await Nomad.findByIdAndUpdate(
+      userId,
+      { $push: { tribe: requestorId } },
+      { new: true }
+    );
+    // delete request from bondRequest
+    const deleteBond = await removeBondRequest(requestId);
+    if (!deleteBond) throw new Error("Couldn't confirm request!");
+    return { result, success: true };
+  } catch (error) {
+    return { result: error, success: false };
+  }
+};
+
+const removeBondRequest = (requestId) => {
+  return Bond.findByIdAndDelete(requestId)
+    .then(() => ({ result: null, success: true }))
+    .catch((err) => ({ result: err, success: false }));
+};
+
+const rejectBondRequest = () => {};
+//#endregion
 
 //#region CARAVAN
 
@@ -195,6 +264,12 @@ const deleteBlaze = (ownerId, blazeId) => {};
 //#endregion
 
 module.exports = {
+  getIncomingBondRequests,
+  getOutgoingBondRequests,
+  placeBondRequest,
+  removeBondRequest,
+  confirmBondRequest,
+  rejectBondRequest,
   createCaravan,
   getCaravanById,
   getCaravansByOwner,
