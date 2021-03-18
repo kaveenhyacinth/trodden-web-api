@@ -17,10 +17,21 @@ const suggestCaravansByInterests = async (userId) => {
 const suggestNomdsByInterests = async (userId) => {
   try {
     const nomad = await Nomad.findById(userId);
-    const sugNomads = await Nomad.find({
+    const NomadsSug = await Nomad.find({
       interests: { $in: nomad.interests },
     });
-    return { result: sugNomads, success: true };
+    const withoutOwnerSug = NomadsSug.filter((nomad) => nomad._id != userId);
+
+    let formattedSug = withoutOwnerSug;
+
+    if (nomad.tribe) {
+      nomad.tribe.map((dot) => {
+        formattedSug = withoutOwnerSug.filter((nomad) => nomad._id != dot);
+        console.log("Formatted sugs", formattedSug);
+      });
+    }
+
+    return { result: formattedSug, success: true };
   } catch (error) {
     return { result: error, success: false };
   }

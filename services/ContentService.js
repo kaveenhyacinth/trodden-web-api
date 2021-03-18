@@ -1,5 +1,6 @@
 // const fs = require("fs");
 const Memory = require("../models/Memory");
+const Nomad = require("../models/Nomad");
 const Tag = require("../models/Tag");
 const Destination = require("../models/Destination");
 
@@ -11,7 +12,10 @@ const getMemosByUser = (userId) => {
   return Memory.find({ owner: userId })
     .sort({ createdAt: -1 })
     .populate({ path: "owner", select: "first_name last_name prof_img" })
-    .populate({ path: "comments.commentor", select: "first_name last_name prof_img" })
+    .populate({
+      path: "comments.commentor",
+      select: "first_name last_name prof_img",
+    })
     .populate({ path: "heats", select: "first_name last_name prof_img" })
     .populate({ path: "destination" })
     .then((memos) => ({ result: memos, success: true }))
@@ -112,6 +116,12 @@ const createMemo = async (payload) => {
     const result = await memory.save();
     console.log("Result:", result);
     if (!result) return { result, success: false };
+
+    const saveMemoInNomad = await Nomad.findByIdAndUpdate(
+      userId,
+      { $push: { memories: result._id } },
+      { new: true }
+    );
 
     return { result, success: true };
   } catch (error) {
