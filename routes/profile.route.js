@@ -14,6 +14,7 @@ const {
   placeBondRequestController,
   confirmBondRequestController,
   removeBondRequestController,
+  getTribeListController,
 } = require("../controllers/profile.controller");
 //#endregion
 
@@ -27,6 +28,13 @@ router.get(
   isSignedIn,
   isAuthenticated,
   getProfileByIdController
+);
+
+router.get(
+  "/tribe/bonds/:userId",
+  isSignedIn,
+  isAuthenticated,
+  getTribeListController
 );
 
 /**
@@ -58,12 +66,7 @@ router.get(
   getOutgoingBondRequestsController
 );
 
-router.post(
-  "/req/new",
-  isSignedIn,
-  isAuthenticated,
-  placeBondRequestController
-);
+router.put("/req/new", isSignedIn, isAuthenticated, placeBondRequestController);
 
 router.patch(
   "/req/confirm",
@@ -72,7 +75,7 @@ router.patch(
   confirmBondRequestController
 );
 
-router.delete("/req/rm/:userId/:requestId", removeBondRequestController);
+router.delete("/req/rm/:requestId", removeBondRequestController);
 
 //#endregion
 

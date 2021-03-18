@@ -1,5 +1,9 @@
 const { validationResult } = require("express-validator");
-const { getProfilebyId, setupProfile } = require("../services/ProfileService");
+const {
+  getProfilebyId,
+  getTribeList,
+  setupProfile,
+} = require("../services/ProfileService");
 const bonds = require("../services/CommunityService");
 
 const getProfileByIdController = async (req, res) => {
@@ -21,6 +25,31 @@ const getProfileByIdController = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       msg: "Internal server error @getProfileByIdController",
+      result: error,
+      success: false,
+    });
+  }
+};
+
+const getTribeListController = async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const { result, success } = await getTribeList(userId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Got tribe list",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getTribeListController",
       result: error,
       success: false,
     });
@@ -64,8 +93,9 @@ const getIncomingBondRequestsController = async (req, res) => {
       msg: "Got incoming bond requests",
     });
   } catch (error) {
+    console.log("fatel error", error);
     return res.status(500).json({
-      msg: "Internal server erro while processing on bond requests actions",
+      msg: "Internal server error while processing on bond requests actions",
       result: error,
       success: false,
     });
@@ -170,6 +200,7 @@ const removeBondRequestController = async (req, res) => {
 
 module.exports = {
   getProfileByIdController,
+  getTribeListController,
   setUpProfileController,
   getIncomingBondRequestsController,
   getOutgoingBondRequestsController,

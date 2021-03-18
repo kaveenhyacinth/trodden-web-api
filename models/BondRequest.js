@@ -15,10 +15,6 @@ const bondRequestSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const BondRequest = mongoose.model(
-  "BondRequest",
-  bondRequestSchema,
-  "bondRequests"
-);
+const BondRequest = mongoose.model("Bond", bondRequestSchema, "bondRequests");
 
 module.exports = BondRequest;

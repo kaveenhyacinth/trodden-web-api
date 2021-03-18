@@ -1,6 +1,7 @@
 const Interest = require("../models/Interest");
 const Caravan = require("../models/Caravan");
 const Nomad = require("../models/Nomad");
+const Bond = require("../models/BondRequest");
 
 const suggestCaravansByInterests = async (userId) => {
   try {
@@ -16,22 +17,45 @@ const suggestCaravansByInterests = async (userId) => {
 
 const suggestNomdsByInterests = async (userId) => {
   try {
+    // Get nomad interests
     const nomad = await Nomad.findById(userId);
-    const NomadsSug = await Nomad.find({
+    // Find suggestions according to nomad interests
+    const rawNomadSuggestions = await Nomad.find({
       interests: { $in: nomad.interests },
-    });
-    const withoutOwnerSug = NomadsSug.filter((nomad) => nomad._id != userId);
+    }).select("first_name last_name prof_img");
+    // Remove the self record
+    let nomadSuggestions = rawNomadSuggestions.filter(
+      (nomad) => nomad._id != userId
+    );
 
-    let formattedSug = withoutOwnerSug;
+    if (nomadSuggestions === [])
+      return { result: nomadSuggestions, success: true };
 
-    if (nomad.tribe) {
-      nomad.tribe.map((dot) => {
-        formattedSug = withoutOwnerSug.filter((nomad) => nomad._id != dot);
-        console.log("Formatted sugs", formattedSug);
+    // // Remove if already bonded
+    // if (nomad.tribe) {
+    //   nomadSuggestions = nomadSuggestions.filter(
+    //     (item) => !nomad.tribe.includes(item._id)
+    //   );
+    // }
+
+    // if (nomadSuggestions === [])
+    //   return { result: nomadSuggestions, success: true };
+
+    // check if active bond reqs
+    const activeBonds = await Bond.find({ requestee: nomad._id });
+    // Filter if active bond reqs
+    if (activeBonds) {
+      // filter active bond owner ids
+      const activeBondOwners = [];
+      activeBonds.forEach((element) => {
+        activeBondOwners.push(element.owner);
       });
+      // remove active bonds
+      nomadSuggestions = nomadSuggestions.filter(
+        (item) => activeBondOwners.indexOf(item._id) === -1
+      );
     }
-
-    return { result: formattedSug, success: true };
+    return { result: nomadSuggestions, success: true };
   } catch (error) {
     return { result: error, success: false };
   }

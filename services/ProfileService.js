@@ -18,6 +18,18 @@ const getProfilebyId = async (userId) => {
   }
 };
 
+const getTribeList = async (userId) => {
+  try {
+    const result = await Nomad.findById(userId).select("tribe").populate({
+      path: "tribe",
+      select: "first_name last_name prof_img",
+    });
+    return { result, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
+
 /**
  * @description Setup profile info after sign up
  * @param {Object} payload HTTP request body
@@ -75,5 +87,6 @@ const setupProfile = async (payload) => {
 
 module.exports = {
   getProfilebyId,
+  getTribeList,
   setupProfile,
 };

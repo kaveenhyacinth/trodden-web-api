@@ -6,12 +6,13 @@ const Nomad = require("../models/Nomad");
 //#region BOND
 const getIncomingBondRequests = async (userId) => {
   try {
-    const result = Bond.find({ requestee: userId }).populate({
+    const result = await Bond.find({ requestee: userId }).populate({
       path: "owner",
       select: "first_name last_name prof_img",
     });
     return { result, success: true };
   } catch (error) {
+    console.log("fatel errror", error);
     return { result: error, success: false };
   }
 };
@@ -31,6 +32,14 @@ const getOutgoingBondRequests = async (userId) => {
 const placeBondRequest = async (payload) => {
   try {
     const { userId, requestee } = payload;
+    const isExisting = await Bond.findOne({ owner: userId, requestee });
+    if (
+      isExisting &&
+      isExisting.owner == userId &&
+      isExisting.requestee == requestee
+    ) {
+      return { result: isExisting, success: true };
+    }
     const newBondrequest = new Bond({
       owner: userId,
       requestee,
@@ -47,15 +56,20 @@ const confirmBondRequest = async (payload) => {
   try {
     const { userId, requestId, requestorId } = payload;
     // save requestee in tribe
-    const result = await Nomad.findByIdAndUpdate(
+    const requesteeResult = await Nomad.findByIdAndUpdate(
       userId,
-      { $push: { tribe: requestorId } },
+      { $addToSet: { tribe: requestorId } },
+      { new: true }
+    );
+    const requestorResult = await Nomad.findByIdAndUpdate(
+      requestorId,
+      { $addToSet: { tribe: userId } },
       { new: true }
     );
     // delete request from bondRequest
     const deleteBond = await removeBondRequest(requestId);
     if (!deleteBond) throw new Error("Couldn't confirm request!");
-    return { result, success: true };
+    return { result: { requesteeResult, requestorResult }, success: true };
   } catch (error) {
     return { result: error, success: false };
   }
