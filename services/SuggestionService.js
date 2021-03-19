@@ -15,87 +15,73 @@ const suggestCaravansByInterests = async (userId) => {
   }
 };
 
+/**
+ * Get nomad suggestions for a given user
+ * @param {ObjectId} userId
+ * @returns Object
+ */
 const suggestNomdsByInterests = async (userId) => {
   try {
     // Get nomad interests
     const nomad = await Nomad.findById(userId);
-    // Find suggestions according to nomad interests
+
+    // Find suggestions by nomad interests
     const rawNomadSuggestions = await Nomad.find({
       interests: { $in: nomad.interests },
     }).select("first_name last_name prof_img");
-    // Remove the self record
+
+    // Remove the self record suggestion
     let nomadSuggestions = rawNomadSuggestions.filter(
       (nomad) => nomad._id != userId
     );
 
+    // Return if no non-self suggestions
     if (nomadSuggestions === [])
       return { result: nomadSuggestions, success: true };
 
-    // set suggestions array
+    // Create suggestions array
     const suggestionsArray = [];
     nomadSuggestions.forEach((element) =>
       suggestionsArray.push(element._id.toString())
     );
 
-    console.log("Suggestion Array", suggestionsArray);
+    // Create omition ids array
+    const omitionIds = [];
 
-    const activeBondsReqs = [];
+    // Push existing nomads to omition
+    if (nomad.tribe)
+      nomad.tribe.forEach((element) => omitionIds.push(element.toString()));
 
-    // check with tribe
-    nomad.tribe.forEach((element) => activeBondsReqs.push(element.toString()));
-
-    // check if incoming bond reqs
+    // Get active incomming bond requestors
     const incomingBondReqs = await Bond.find({ requestee: nomad._id }).select(
       "owner"
     );
-
-    console.log("incoming", incomingBondReqs);
-    // Filter if incoming bond reqs
-    if (incomingBondReqs) {
-      // filter incoming bond owner ids
+    if (incomingBondReqs)
+      // Push active incoming bond requestors to omition
       incomingBondReqs.forEach((element) => {
-        activeBondsReqs.push(element.owner.toString());
+        omitionIds.push(element.owner.toString());
       });
-      // remove active bonds
-      // nomadSuggestions = nomadSuggestions.filter(
-      //   (item) => activeBondsReqs.indexOf(item._id) === -1
-      // );
-    }
 
-    // Check if outgoing bond reqs
+    // Get active outgoing bond requestees
     const outgoingBondReqs = await Bond.find({ owner: nomad._id }).select(
       "requestee"
     );
-    console.log("outgoing", outgoingBondReqs);
-    // Filter if outgoing bond reqs
     if (outgoingBondReqs) {
-      // filter outgoing bond requestee ids
+      // Push active outgoing bond requestees to omition
       outgoingBondReqs.forEach((element) => {
-        activeBondsReqs.push(element.requestee.toString());
+        omitionIds.push(element.requestee.toString());
       });
     }
 
-    console.log("active bonds", activeBondsReqs);
+    // Remove duplications in omition using Set()
+    const omition = [...new Set(omitionIds)];
 
-    // concat active bond reqs with active bonds
-    // const unformattedOmition = [
-    //   ...(nomad.tribe ?? []),
-    //   ...(activeBondsReqs ?? []),
-    // ];
-
-    // console.log("unformattedOmition", unformattedOmition);
-
-    // Remove duplication and format omition
-    const omition = [...new Set(activeBondsReqs)];
-
-    console.log("Omition", omition);
-
-    // Omit and format suggestions
+    // Filter nomad suggestions using omition
     nomadSuggestions = nomadSuggestions.filter(
       (item) => !omition.includes(item._id.toString())
     );
 
-    console.log("Final suggestion", nomadSuggestions);
+    console.log("Final suggestion", nomadSuggestions); // <-clg
 
     return { result: nomadSuggestions, success: true };
   } catch (error) {
