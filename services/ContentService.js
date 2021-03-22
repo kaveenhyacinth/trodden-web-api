@@ -61,7 +61,14 @@ const fetchFeed = async (userId) => {
     memoryIdArray = [...new Set(memoryIdArray)];
 
     const feedMemories = await Memory.find({ _id: { $in: memoryIdArray } })
-      .sort({ heats: -1, createdAt: -1 })
+      .populate({ path: "owner", select: "first_name last_name prof_img" })
+      .populate({
+        path: "comments.commentor",
+        select: "first_name last_name prof_img",
+      })
+      .populate({ path: "heats", select: "first_name last_name prof_img" })
+      .populate({ path: "destination" })
+      .sort({ createdAt: -1, heats: -1 })
       .limit(100);
 
     return { result: feedMemories, success: true };
@@ -78,7 +85,7 @@ const fetchFeed = async (userId) => {
  */
 const getMemosByUser = (userId) => {
   return Memory.find({ owner: userId })
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: -1, heats: -1 })
     .populate({ path: "owner", select: "first_name last_name prof_img" })
     .populate({
       path: "comments.commentor",
