@@ -1,4 +1,3 @@
-// const fs = require("fs");
 const Memory = require("../models/Memory");
 const Nomad = require("../models/Nomad");
 const Tag = require("../models/Tag");
@@ -85,7 +84,6 @@ const checkAndCreateDestination = async (destination) => {
   }
 };
 
-// FIXME: option to add multiple images
 /**
  * @description Create a new post
  * @param {Object} payload Http request body
