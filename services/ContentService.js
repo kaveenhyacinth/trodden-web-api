@@ -3,6 +3,75 @@ const Nomad = require("../models/Nomad");
 const Tag = require("../models/Tag");
 const Destination = require("../models/Destination");
 
+//#region Feed
+const fetchFeed = async (userId) => {
+  try {
+    // Select intersts, tribe and geography details
+    const nomad = await Nomad.findById(userId).select(
+      "interests city country region tribe memories"
+    );
+
+    let memoryIdArray = [];
+
+    // Get tribe memo ids
+    const tribeMemories = await Nomad.find({
+      _id: { $in: nomad.tribe },
+    }).select("memories -_id");
+    console.log("Tribe memos", tribeMemories);
+
+    // Get geo city nomad memo ids
+    const geoCityNomadMemoryIds = await Nomad.find({
+      city: { $in: nomad.city },
+    }).select("memories -_id");
+    console.log("Geo city nomad memos", geoCityNomadMemoryIds);
+
+    // Get geo country nomad memo ids
+    const geoCountryNomadMemoryIds = await Nomad.find({
+      country: { $in: nomad.country },
+    }).select("memories -_id");
+    console.log("Geo country nomad memos", geoCountryNomadMemoryIds);
+
+    // Get interests nomad memo ids
+    const interestsNomadMemoryIds = await Nomad.find({
+      interests: { $in: nomad.interests },
+    }).select("memories -_id");
+    console.log("Interests nomad memos", interestsNomadMemoryIds);
+
+    // Push all memory ids into single array
+    tribeMemories.forEach((element) => memoryIdArray.push(...element.memories));
+    geoCityNomadMemoryIds.forEach((element) =>
+      memoryIdArray.push(...element.memories)
+    );
+    geoCountryNomadMemoryIds.forEach((element) =>
+      memoryIdArray.push(...element.memories)
+    );
+    interestsNomadMemoryIds.forEach((element) =>
+      memoryIdArray.push(...element.memories)
+    );
+
+    // Filter out own memories
+    // memoryIdArray = memoryIdArray.filter(
+    //   (element) => !nomad.memories.includes(element)
+    // );
+
+    // Cast memoryIdArray elemeents to string
+    memoryIdArray = memoryIdArray.map((element) => element.toString());
+
+    // Remove duplicates
+    memoryIdArray = [...new Set(memoryIdArray)];
+
+    const feedMemories = await Memory.find({ _id: { $in: memoryIdArray } })
+      .sort({ heats: -1, createdAt: -1 })
+      .limit(100);
+
+    return { result: feedMemories, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
+//#endregion
+
+//#region Memory
 /**
  * @description Fetch memories by a specific user
  * @param {ObjectId} userId owner of the memories
@@ -219,6 +288,7 @@ const heatOnMemory = async (payload) => {
     return { result: error, success: false };
   }
 };
+//#endregion
 
 module.exports = {
   getMemosByUser,
@@ -227,4 +297,5 @@ module.exports = {
   deleteMemo,
   commentOnMemo,
   heatOnMemory,
+  fetchFeed,
 };
