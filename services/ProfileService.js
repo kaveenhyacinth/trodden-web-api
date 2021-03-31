@@ -6,14 +6,24 @@ const Nomad = require("../models/Nomad");
  */
 const getProfilebyId = async (userId) => {
   try {
-    const nomad = await Nomad.findById(userId);
+    const nomad = await Nomad.findById(userId)
+      .populate("memories")
+      .populate({
+        path: "memories.owner",
+        select: "first_name last_name prof_img",
+      })
+      // .populate("trips")
+      .populate("tribe");
     if (!nomad) {
       throw new Error("Couldn't find the user profile when fetching");
     }
     nomad.encry_password = undefined;
     nomad.salt = undefined;
+
+    console.log(nomad);
     return { result: nomad, success: true };
   } catch (error) {
+    console.error("Error", error);
     return { result: error.message, success: false };
   }
 };

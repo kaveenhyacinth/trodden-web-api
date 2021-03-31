@@ -14,7 +14,7 @@ const getProfileByIdController = async (req, res) => {
       return res.status(400).json({
         result,
         success,
-        msg: result,
+        msg: "Couldn't get user",
       });
     }
     return res.status(200).json({

@@ -1,6 +1,7 @@
 node_modules/
-.env
 test/
 config/
-*.test.js
 uploads/
+*.test.js
+.env
+log/
