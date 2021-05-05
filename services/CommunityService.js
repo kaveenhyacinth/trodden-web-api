@@ -128,14 +128,19 @@ const getCaravansByUser = (userId) => {
  * @param {Object} payload HTTP request body
  * @param {Obejct} imageData req.file of multer object
  */
-const createCaravan = (payload, imageData) => {
-  const { userId, caravanName, description, interests } = payload;
-  const { filename } = imageData;
+const createCaravan = (payload) => {
+  const {
+    userId,
+    caravanName,
+    caravanDescription,
+    interests,
+    filename,
+  } = payload;
 
   const caravan = new Caravan({
     owner: userId,
     caravan_name: caravanName,
-    desc: description,
+    desc: caravanDescription,
     interests,
     display_img: filename,
     nomads: userId,

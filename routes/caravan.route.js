@@ -42,8 +42,8 @@ router.get(
  */
 router.get(
   "/my/:userId",
-  isSignedIn,
-  isAuthenticated,
+  // isSignedIn,
+  // isAuthenticated,
   getCaravansByUserController
 );
 
@@ -60,7 +60,6 @@ router.get("/sug/:userId", isSignedIn, getCaravansByInterestsController);
 router.post(
   "/new",
   isSignedIn,
-  upload.single("image"),
   isAuthenticated,
   createCaravanController
 );

@@ -138,7 +138,7 @@ const getCaravansByInterestsController = async (req, res) => {
  */
 const createCaravanController = async (req, res) => {
   try {
-    const { result, success } = await createCaravan(req.body, req.file);
+    const { result, success } = await createCaravan(req.body);
     if (!success) {
       return res.status(400).json({
         result,
