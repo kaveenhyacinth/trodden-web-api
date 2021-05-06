@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {upload} = require("../jobs/FileStorageEngine");
+const { upload } = require("../jobs/FileStorageEngine");
 
 //#region IMPORTS
 const {
@@ -57,18 +57,13 @@ router.get("/sug/:userId", isSignedIn, getCaravansByInterestsController);
  * @description Create a caravan
  * @name post/createCaravan
  */
-router.post(
-  "/new",
-  isSignedIn,
-  isAuthenticated,
-  createCaravanController
-);
+router.post("/new", isSignedIn, isAuthenticated, createCaravanController);
 
 /**
  * @description Connect with a caravan
  * @name patch/joinCaravan
  */
-router.patch("/join", isSignedIn, isAuthenticated, connectToCaravanController);
+router.put("/join", isSignedIn, isAuthenticated, connectToCaravanController);
 
 /**
  * @description Update a caravan meta

@@ -167,7 +167,7 @@ const createCaravanController = async (req, res) => {
  */
 const connectToCaravanController = async (req, res) => {
   try {
-    const { result, success } = await connectToCaravan(payload);
+    const { result, success } = await connectToCaravan(req.body);
     if (!success) {
       return res.status(400).json({
         result,

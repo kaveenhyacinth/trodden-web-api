@@ -159,6 +159,7 @@ const createCaravan = (payload) => {
  * @param {Object} payload HTTP request body
  */
 const connectToCaravan = async (payload) => {
+  console.log("Inside Connect to caravan");
   try {
     const { userId, caravanId } = payload;
     const caravan = await Caravan.findById(caravanId);
@@ -173,10 +174,13 @@ const connectToCaravan = async (payload) => {
       { new: true }
     );
 
+    console.log("result at connect to caravan", updatedCaravan);
+
     return updatedCaravan === null
       ? { result: null, success: false }
       : { result: updatedCaravan, success: true };
   } catch (error) {
+    console.log("error at connect to caravan", error);
     return { result: error, success: false };
   }
 };
