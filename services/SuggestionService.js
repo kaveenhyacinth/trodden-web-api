@@ -5,11 +5,19 @@ const Bond = require("../models/BondRequest");
 
 const suggestCaravansByInterests = async (userId) => {
   try {
+    // Extract user
     const nomad = await Nomad.findById(userId);
-    const caravans = await Caravan.find({
+
+    // Fetch caravans in user interests
+    const rawCaravanSuggestions = await Caravan.find({
       interests: { $in: nomad.interests },
     });
-    return { result: caravans, success: true };
+
+    // Remove own caravans
+    let caravanSuggestions = rawCaravanSuggestions.filter(
+      (caravan) => caravan.owner != userId
+    );
+    return { result: caravanSuggestions, success: true };
   } catch (error) {
     return { result: error, success: false };
   }
