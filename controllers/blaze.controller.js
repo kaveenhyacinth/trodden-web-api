@@ -16,7 +16,7 @@ const {
  */
 const createBlazeController = async (req, res) => {
   try {
-    const { result, success } = await createBlaze(req.body, req?.file);
+    const { result, success } = await createBlaze(req.body);
     if (!success) {
       return res.status(400).json({
         result,

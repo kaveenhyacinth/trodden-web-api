@@ -1,7 +1,7 @@
 //#region  IMPORTS
 const express = require("express");
 const router = express.Router();
-const {upload} = require("../jobs/FileStorageEngine");
+const { upload } = require("../jobs/FileStorageEngine");
 const {
   isAuthenticated,
   isSignedIn,
@@ -21,13 +21,7 @@ const {
  * @description Create new blaze
  * @name post/createBlaze
  */
-router.post(
-  "/new",
-  isSignedIn,
-  upload.single("image"),
-  isAuthenticated,
-  createBlazeController
-);
+router.post("/new", isSignedIn, isAuthenticated, createBlazeController);
 
 router.get("/", isSignedIn, getRecentBlazesController);
 router.get("/i/:blazeId", isSignedIn, getBlazeByIdController);

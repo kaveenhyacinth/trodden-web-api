@@ -235,8 +235,8 @@ const deleteCaravan = (userId, caravanId) => {
  * @param {Object} imageData Http request file by multer
  * @async
  */
-const createBlaze = async (payload, imageData) => {
-  const { userId, caravanId, title, desc } = payload;
+const createBlaze = async (payload) => {
+  const { userId, caravanId, title, desc, date, location, filename } = payload;
 
   // check if caravan is owned by the ownerId
   try {
