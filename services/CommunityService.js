@@ -97,6 +97,8 @@ const getCaravanById = (caravanId) => {
   return Caravan.findById(caravanId)
     .populate({ path: "owner", select: "_id first_name last_name prof_img" })
     .populate({ path: "nomads", select: "_id first_name last_name prof_img" })
+    .populate("blazes")
+    .populate("blazes.location")
     .then((caravan) => ({ result: caravan, success: true }))
     .catch((err) => ({ result: err, success: false }));
 };
@@ -213,8 +215,6 @@ const updateCaravan = (payload) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
-// TODO: Update caravan image feature
-
 /**
  * @description Delete a Caravan
  * @param {ObjectId} userId Caravan owner id
@@ -295,11 +295,50 @@ const createBlaze = async (payload) => {
 // TODO: Get blaze by date period
 const getRecentBlazes = (balzeId) => {};
 
-// TODO: Get blaze by id
-const getBlazeById = (balzeId) => {};
+const getBlazeById = async (balzeId) => {
+  try {
+    const result = await Blaze.findById(balzeId)
+      .sort({ date: 1 })
+      .populate({
+        path: "participants",
+        select: "first_name last_name prof_img",
+      })
+      .populate({
+        path: "caravan",
+        select: "caravan_name",
+      })
+      .populate("location");
 
-// TODO: Get blazes by caravan
-const getBlazesByCaravan = (caravanId) => {};
+    if (!result)
+      throw new Error("Something went wrong while fetching blazes @service");
+
+    return { result, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
+
+const getBlazesByCaravan = async (caravanId) => {
+  try {
+    const result = await Blaze.find({
+      caravan: caravanId,
+      date: { $gte: Date.now() },
+    })
+      .sort({ date: 1 })
+      .populate({
+        path: "participants",
+        select: "first_name last_name prof_img",
+      })
+      .populate("location");
+
+    if (!result)
+      throw new Error("Something went wrong while fetching blazes @service");
+
+    return { result, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
 
 // TODO: Update a blaze
 const updateBalze = (ownerId, blazeId, payload) => {};
