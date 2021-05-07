@@ -1,11 +1,11 @@
 const {
   createBlaze,
-  getRecentBlazes,
   getBlazesByCaravan,
   getBlazeById,
   markAsGoingToBlaze,
   updateBalze,
   deleteBlaze,
+  getJoinedBlazes,
 } = require("../services/CommunityService");
 
 /**
@@ -39,8 +39,30 @@ const createBlazeController = async (req, res) => {
   }
 };
 
-// TODO: Get blaze by date period
-const getRecentBlazesController = async (req, res) => {};
+const getJoinedBlazesController = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { result, success } = await getJoinedBlazes(userId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while fetching blazes",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Blazes have been fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getJoinedBlazesController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 // TODO: Get blaze by id
 const getBlazeByIdController = async (req, res) => {
@@ -96,8 +118,30 @@ const getBlazesByCaravanController = async (req, res) => {
 // TODO: Update a blaze
 const updateBlazeController = async (req, res) => {};
 
-// TODO: Mark as going to a blaze
-const markAsGoingToBlazeController = async (req, res) => {};
+const markAsGoingToBlazeController = async (req, res) => {
+  try {
+    const { blazeId, userId } = req.body;
+    const { result, success } = await markAsGoingToBlaze(userId, blazeId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while join blaze",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Joined successfully to blaze",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @markAsGoingToBlazeController",
+      err: error,
+      success: false,
+    });
+  }
+};
 
 // TODO: Delete a blaze
 const deleteBlazeController = async (req, res) => {};
@@ -106,7 +150,7 @@ module.exports = {
   createBlazeController,
   getBlazeByIdController,
   getBlazesByCaravanController,
-  getRecentBlazesController,
+  getJoinedBlazesController,
   updateBlazeController,
   markAsGoingToBlazeController,
   deleteBlazeController,

@@ -292,8 +292,30 @@ const createBlaze = async (payload) => {
   }
 };
 
-// TODO: Get blaze by date period
-const getRecentBlazes = (balzeId) => {};
+const getJoinedBlazes = async (userId) => {
+  try {
+    const result = await Blaze.find({ participants: userId })
+      .sort({ date: 1 })
+      .populate({
+        path: "participants",
+        select: "first_name last_name prof_img",
+      })
+      .populate({
+        path: "caravan",
+        select: "caravan_name",
+      })
+      .populate("location");
+
+    console.log("Joined Blazes", result);
+
+    if (!result)
+      throw new Error("Something went wrong while fetching blazes @service");
+
+    return { result, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
 
 const getBlazeById = async (balzeId) => {
   try {
@@ -343,8 +365,24 @@ const getBlazesByCaravan = async (caravanId) => {
 // TODO: Update a blaze
 const updateBalze = (ownerId, blazeId, payload) => {};
 
-// TODO: Mark as going to a blaze
-const markAsGoingToBlaze = (userId, blazeId) => {};
+const markAsGoingToBlaze = async (userId, blazeId) => {
+  try {
+    const joinBlaze = await Blaze.findByIdAndUpdate(
+      blazeId,
+      {
+        $addToSet: { participants: userId },
+      },
+      { new: true }
+    );
+
+    return joinBlaze === null
+      ? { result: null, success: false }
+      : { result: joinBlaze, success: true };
+  } catch (error) {
+    console.log("error at join to blaze", error);
+    return { result: error, success: false };
+  }
+};
 
 // TODO: Delete a blaze
 const deleteBlaze = (ownerId, blazeId) => {};
@@ -366,7 +404,7 @@ module.exports = {
   updateCaravan,
   deleteCaravan,
   createBlaze,
-  getRecentBlazes,
+  getJoinedBlazes,
   getBlazesByCaravan,
   getBlazeById,
   markAsGoingToBlaze,

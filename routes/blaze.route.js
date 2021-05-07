@@ -10,7 +10,7 @@ const {
   createBlazeController,
   getBlazeByIdController,
   getBlazesByCaravanController,
-  getRecentBlazesController,
+  getJoinedBlazesController,
   updateBlazeController,
   markAsGoingToBlazeController,
   deleteBlazeController,
@@ -23,17 +23,12 @@ const {
  */
 router.post("/new", isSignedIn, isAuthenticated, createBlazeController);
 
-router.get("/", isSignedIn, getRecentBlazesController);
+router.get("/j/:userId", isSignedIn, getJoinedBlazesController);
 router.get("/i/:blazeId", isSignedIn, getBlazeByIdController);
 router.get("/c/:caravanId", isSignedIn, getBlazesByCaravanController);
 
 router.put("/u/:blazeId", isSignedIn, isAuthenticated, updateBlazeController);
-router.patch(
-  "/p/:blazeId",
-  isSignedIn,
-  isAuthenticated,
-  markAsGoingToBlazeController
-);
+router.patch("/p", isSignedIn, isAuthenticated, markAsGoingToBlazeController);
 
 router.delete(
   "/d/:blazeId",
