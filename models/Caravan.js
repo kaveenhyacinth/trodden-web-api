@@ -16,10 +16,18 @@ const caravanSchema = new mongoose.Schema(
         ref: "Interest",
       },
     ],
-    nomads: [{
-      type: ObjectId,
-      ref: "Nomad",
-    }],
+    nomads: [
+      {
+        type: ObjectId,
+        ref: "Nomad",
+      },
+    ],
+    blazes: [
+      {
+        type: ObjectId,
+        ref: "Blaze",
+      },
+    ],
   },
   { timestamps: true }
 );

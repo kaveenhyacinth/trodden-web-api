@@ -8,13 +8,8 @@ const blazeSchema = new mongoose.Schema(
       ref: "Caravan",
     },
     location: {
-      type: {
-        type: String,
-        enum: ["Point"],
-      },
-      coordinates: {
-        type: [Number],
-      },
+      type: ObjectId,
+      ref: "Destination",
     },
     participants: [
       {

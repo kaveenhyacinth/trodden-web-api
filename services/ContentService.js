@@ -305,4 +305,5 @@ module.exports = {
   commentOnMemo,
   heatOnMemory,
   fetchFeed,
+  checkAndCreateDestination,
 };

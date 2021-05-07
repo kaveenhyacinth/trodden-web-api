@@ -3,6 +3,8 @@ const Caravan = require("../models/Caravan");
 const Blaze = require("../models/Blaze");
 const Nomad = require("../models/Nomad");
 
+const { checkAndCreateDestination } = require("./ContentService");
+
 //#region BOND
 const getIncomingBondRequests = async (userId) => {
   try {
@@ -238,6 +240,8 @@ const deleteCaravan = (userId, caravanId) => {
 const createBlaze = async (payload) => {
   const { userId, caravanId, title, desc, date, location, filename } = payload;
 
+  console.log("Payload at blaze creation", payload);
+
   // check if caravan is owned by the ownerId
   try {
     const caravanOwner = await Caravan.findOne({
@@ -245,23 +249,45 @@ const createBlaze = async (payload) => {
       owner: userId,
     });
 
+    console.log("Caravan owner at blaze create", caravanOwner);
+
     // if not return
     if (!caravanOwner) throw new Error("Unauthorized Action");
+
+    const des = location.id ? await checkAndCreateDestination(location) : null;
+
+    console.log("Destination id at blaze creation", des);
 
     // if so create the new blaze
     const blaze = new Blaze({
       caravan: caravanId,
       title,
       desc,
-      image: imageData.filename ?? "",
+      image: filename,
       participants: userId,
+      date,
+      location: des,
     });
+
+    console.log("Blaze to save", blaze);
+
     const newBlaze = await blaze.save();
     if (!newBlaze)
       throw new Error("Something went wrong while saving blaze @service");
 
+    console.log("Blaze saves");
+
+    const saveBlazeInCaravan = await Caravan.findByIdAndUpdate(
+      caravanId,
+      { $push: { blazes: newBlaze._id } },
+      { new: true }
+    );
+
+    console.log("Blaze saved in caravan");
+
     return { result: newBlaze, success: true };
   } catch (error) {
+    console.log("Error at blaze creation", error);
     return { result: error.message, success: false };
   }
 };
