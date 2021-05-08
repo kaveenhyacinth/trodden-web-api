@@ -2,6 +2,7 @@ const Memory = require("../models/Memory");
 const Nomad = require("../models/Nomad");
 const Tag = require("../models/Tag");
 const Destination = require("../models/Destination");
+const Trip = require("../models/Trip");
 
 //#region Feed
 const fetchFeed = async (userId) => {
@@ -297,6 +298,51 @@ const heatOnMemory = async (payload) => {
 };
 //#endregion
 
+//#region Trip
+
+const createTrip = async (payload) => {
+  const { userId, content, tripTitle, dayPlans, startDate, endDate } = payload;
+  console.log("Payload", payload);
+
+  try {
+    const tags = content !== "" ? await checkAndCreateHashtags(content) : [];
+
+    console.log("Tags", tags);
+
+    const trip = new Trip({
+      owner: userId,
+      dayPlans,
+      title: tripTitle,
+      desc: content,
+      start_date: startDate,
+      end_date: endDate,
+      tags,
+    });
+
+    console.log("Trip to save", trip);
+
+    const result = await trip.save();
+    console.log("Result:", result);
+    if (!result) return { result, success: false };
+
+    console.log("Result", result);
+
+    const saveTripInNomad = await Nomad.findByIdAndUpdate(
+      userId,
+      { $push: { trips: result._id } },
+      { new: true }
+    );
+
+    console.log("Saved in nomad", saveTripInNomad);
+
+    return { result, success: true };
+  } catch (error) {
+    console.log("error at create trip", error);
+    return { result: error.message, success: false };
+  }
+};
+
+//#endregion
 module.exports = {
   getMemosByUser,
   createMemo,
@@ -306,4 +352,5 @@ module.exports = {
   heatOnMemory,
   fetchFeed,
   checkAndCreateDestination,
+  createTrip,
 };

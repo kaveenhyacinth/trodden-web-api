@@ -5,24 +5,30 @@ const tripSchema = new mongoose.Schema(
   {
     owner: {
       type: ObjectId,
-      ref: "Nomad"
+      ref: "Nomad",
     },
-    destinations: [String],
-    locations: [{
-      type: {
-        type: String,
-        enum: ["Point"],
+    dayPlans: [
+      {
+        day: Number,
+        note: String,
+        selectedLocations: [
+          {
+            latitude: Number,
+            longitude: Number,
+          },
+        ],
       },
-      coordinates: {
-        type: [Number],
-      },
-    }],
+    ],
     participants: [
       {
         type: ObjectId,
         ref: "Nomad",
       },
     ],
+    isPrivate: {
+      type: Number,
+      default: 0,
+    },
     tags: [String],
     title: String,
     desc: String,
