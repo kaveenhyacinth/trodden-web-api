@@ -11,6 +11,6 @@ const {
 } = require("../middlewares/authenticationChecker");
 
 router.post("/new", isSignedIn, isAuthenticated, createTripController);
-router.get("/n/:userId", isSignedIn, isAuthenticated, getTripByNomadController);
+router.get("/n/:userId", isSignedIn, getTripByNomadController);
 
 module.exports = router;
