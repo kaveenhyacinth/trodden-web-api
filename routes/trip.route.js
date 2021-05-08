@@ -1,12 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const { createTripController } = require("../controllers/trip.controller");
+const {
+  createTripController,
+  getTripByNomadController,
+} = require("../controllers/trip.controller");
 const {
   isSignedIn,
   isAuthenticated,
 } = require("../middlewares/authenticationChecker");
 
 router.post("/new", isSignedIn, isAuthenticated, createTripController);
+router.get("/n/:userId", isSignedIn, isAuthenticated, getTripByNomadController);
 
 module.exports = router;

@@ -302,12 +302,9 @@ const heatOnMemory = async (payload) => {
 
 const createTrip = async (payload) => {
   const { userId, content, tripTitle, dayPlans, startDate, endDate } = payload;
-  console.log("Payload", payload);
 
   try {
     const tags = content !== "" ? await checkAndCreateHashtags(content) : [];
-
-    console.log("Tags", tags);
 
     const trip = new Trip({
       owner: userId,
@@ -319,13 +316,8 @@ const createTrip = async (payload) => {
       tags,
     });
 
-    console.log("Trip to save", trip);
-
     const result = await trip.save();
-    console.log("Result:", result);
     if (!result) return { result, success: false };
-
-    console.log("Result", result);
 
     const saveTripInNomad = await Nomad.findByIdAndUpdate(
       userId,
@@ -333,11 +325,39 @@ const createTrip = async (payload) => {
       { new: true }
     );
 
-    console.log("Saved in nomad", saveTripInNomad);
-
     return { result, success: true };
   } catch (error) {
-    console.log("error at create trip", error);
+    return { result: error.message, success: false };
+  }
+};
+
+// const getTripsbyId = async (userId) => {
+//   try {
+//     const result = await Trip.find({ owner: userId })
+//       .sort({ startDate: -1 })
+//       .populate({
+//         path: "owner",
+//         select: "first_name last_name prof_img",
+//       });
+//     if (!result) return { result, success: false };
+//     return { result, success: true };
+//   } catch (error) {
+//     return { result: error.message, success: false };
+//   }
+// };
+
+const getTripsByNomad = async (userId) => {
+  try {
+    console.log("inside trips");
+    const result = await Trip.find({ owner: userId })
+      .sort({ startDate: -1 })
+      .populate({
+        path: "owner",
+        select: "first_name last_name prof_img",
+      });
+    if (!result) return { result, success: false };
+    return { result, success: true };
+  } catch (error) {
     return { result: error.message, success: false };
   }
 };
@@ -353,4 +373,5 @@ module.exports = {
   fetchFeed,
   checkAndCreateDestination,
   createTrip,
+  getTripsByNomad,
 };
