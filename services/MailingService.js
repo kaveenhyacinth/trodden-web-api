@@ -33,7 +33,7 @@ const sendVerificationMail = async (userEmail, userFirstName) => {
       );
     return { result: { response: info.response, otp: OTP }, success: true };
   } catch (error) {
-    return { result: error.message, success: false };
+    return { result: "Error at mailing service " + error.message, success: false };
   }
 };
 
