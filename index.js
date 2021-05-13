@@ -1,9 +1,5 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const rfs = require("rotating-file-stream");
-const morgan = require("morgan");
-const path = require("path");
 
 require("dotenv").config({ path: "./config/.env" });
 require("./db/connect");
@@ -11,17 +7,9 @@ require("./db/connect");
 // Init express app
 const app = express();
 
-// Morgan logger stream write -> access.log
-var accessLogStream = rfs.createStream("access.log", {
-  interval: "1d",
-  path: path.join(__dirname, "log"),
-});
-
 // Middlewares
-app.use(morgan("combined", { stream: accessLogStream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(cors());
 
 // Import routes
