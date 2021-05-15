@@ -25,9 +25,6 @@ const feedRoute = require("./routes/feed.route");
 const tripRoute = require("./routes/trip.route");
 
 // Routes
-app.use("/", (req, res) => {
-  res.send("<h2>Trodden RESTful API</h2><p>Status: Ok</p>");
-});
 app.use("/", transportRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/profile", profileRoute);
