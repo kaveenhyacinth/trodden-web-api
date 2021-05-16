@@ -8,10 +8,12 @@ const { checkAndCreateDestination } = require("./ContentService");
 //#region BOND
 const getIncomingBondRequests = async (userId) => {
   try {
+    console.log("Inside Bonds");
     const result = await Bond.find({ requestee: userId }).populate({
       path: "owner",
       select: "first_name last_name prof_img",
     });
+    console.log(result);
     return { result, success: true };
   } catch (error) {
     console.log("fatel errror", error);
@@ -21,10 +23,12 @@ const getIncomingBondRequests = async (userId) => {
 
 const getOutgoingBondRequests = async (userId) => {
   try {
-    const result = Bond.find({ owner: userId }).populate({
-      path: "requestee",
-      select: "first_name last_name prof_img",
-    });
+    const result = await Bond.find({ owner: userId })
+      .select("-owner")
+      .populate({
+        path: "requestee",
+        select: "first_name last_name prof_img",
+      });
     return { result, success: true };
   } catch (error) {
     return { result: error, success: false };
@@ -133,13 +137,8 @@ const getCaravansByUser = (userId) => {
  * @param {Obejct} imageData req.file of multer object
  */
 const createCaravan = (payload) => {
-  const {
-    userId,
-    caravanName,
-    caravanDescription,
-    interests,
-    filename,
-  } = payload;
+  const { userId, caravanName, caravanDescription, interests, filename } =
+    payload;
 
   const caravan = new Caravan({
     owner: userId,

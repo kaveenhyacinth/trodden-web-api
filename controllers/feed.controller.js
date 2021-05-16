@@ -27,7 +27,7 @@ const fetchFeedController = async (req, res) => {
 
 const fetchFeedByHashTagController = async (req, res) => {
   try {
-    const tag = req.params.tag;
+    const tag = `#${req.params.tag.trim()}`;
     const { result, success } = await fetchFeedByHashTag(tag);
     if (!success) {
       return res.status(400).json({
