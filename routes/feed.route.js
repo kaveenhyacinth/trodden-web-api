@@ -6,6 +6,6 @@ const {
 } = require("../controllers/feed.controller");
 
 router.get("/:userId", isSignedIn, fetchFeedController);
-router.get("/:tag", isSignedIn, fetchFeedByHashTagController);
+router.get("/tags:tag", isSignedIn, fetchFeedByHashTagController);
 
 module.exports = router;
