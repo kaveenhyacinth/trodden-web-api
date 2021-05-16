@@ -77,6 +77,26 @@ const fetchFeed = async (userId) => {
     return { result: error.message, success: false };
   }
 };
+
+const fetchFeedByHashTag = async (tag) => {
+  try {
+    const result = await Memory.find({ tags: tag })
+      .populate({ path: "owner", select: "first_name last_name prof_img" })
+      .populate({
+        path: "comments.commentor",
+        select: "first_name last_name prof_img",
+      })
+      .populate({ path: "heats", select: "first_name last_name prof_img" })
+      .populate({ path: "destination" })
+      .sort({ createdAt: -1, heats: -1 })
+      .limit(100);
+
+    if (!result) return { result: null, success: false };
+    return { result, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
 //#endregion
 
 //#region Memory
@@ -363,6 +383,7 @@ const getTripsByNomad = async (userId) => {
 };
 
 //#endregion
+
 module.exports = {
   getMemosByUser,
   createMemo,
@@ -374,4 +395,5 @@ module.exports = {
   checkAndCreateDestination,
   createTrip,
   getTripsByNomad,
+  fetchFeedByHashTag,
 };
