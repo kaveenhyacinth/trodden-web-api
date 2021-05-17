@@ -3,6 +3,7 @@ const {
   getProfilebyId,
   getTribeList,
   setupProfile,
+  updateUserIntersts,
 } = require("../services/ProfileService");
 const bonds = require("../services/CommunityService");
 
@@ -192,6 +193,7 @@ const removeBondRequestController = async (req, res) => {
     });
   }
 };
+
 const removeBondFromTribeController = async (req, res) => {
   try {
     console.log("params in remove bond", req.params);
@@ -219,6 +221,30 @@ const removeBondFromTribeController = async (req, res) => {
   }
 };
 
+const updateNomadInterestsController = async (req, res) => {
+  try {
+    const { result, success } = await updateUserIntersts(
+      req.body.userId,
+      req.body.interests
+    );
+    if (!success)
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    return res
+      .status(200)
+      .json({ msg: "Updated successfully", result, success: true });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @updateNomadInterestsController",
+      result: error,
+      success: false,
+    });
+  }
+};
+
 module.exports = {
   getProfileByIdController,
   getTribeListController,
@@ -229,4 +255,5 @@ module.exports = {
   confirmBondRequestController,
   removeBondRequestController,
   removeBondFromTribeController,
+  updateNomadInterestsController,
 };

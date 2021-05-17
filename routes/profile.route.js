@@ -16,6 +16,7 @@ const {
   removeBondRequestController,
   getTribeListController,
   removeBondFromTribeController,
+  updateNomadInterestsController,
 } = require("../controllers/profile.controller");
 //#endregion
 
@@ -68,6 +69,12 @@ router.get(
 );
 
 router.put("/req/new", isSignedIn, isAuthenticated, placeBondRequestController);
+router.put(
+  "/interests",
+  isSignedIn,
+  isAuthenticated,
+  updateNomadInterestsController
+);
 
 router.patch(
   "/req/confirm",

@@ -28,6 +28,10 @@ const getProfilebyId = async (userId) => {
   }
 };
 
+/**
+ * @description Fetch Tribe List
+ * @param {String} userId Id of the profile owner
+ */
 const getTribeList = async (userId) => {
   try {
     const result = await Nomad.findById(userId).select("tribe").populate({
@@ -43,7 +47,6 @@ const getTribeList = async (userId) => {
 /**
  * @description Setup profile info after sign up
  * @param {Object} payload HTTP request body
- * @param {Object} imageData HTTP request file (contains image data by multer)
  */
 const setupProfile = async (payload) => {
   const {
@@ -95,8 +98,23 @@ const setupProfile = async (payload) => {
   }
 };
 
+const updateUserIntersts = async (userId, interests) => {
+  try {
+    const result = await Nomad.findByIdAndUpdate(
+      userId,
+      { interests },
+      { new: true }
+    );
+    if (!result) return { result: "Couldn't update Interests", success: false };
+    return { result, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
+
 module.exports = {
   getProfilebyId,
   getTribeList,
   setupProfile,
+  updateUserIntersts,
 };
