@@ -12,7 +12,7 @@ const getProfilebyId = async (userId) => {
         path: "memories.owner",
         select: "first_name last_name prof_img",
       })
-      // .populate("trips")
+      .populate("interests")
       .populate("tribe");
     if (!nomad) {
       throw new Error("Couldn't find the user profile when fetching");

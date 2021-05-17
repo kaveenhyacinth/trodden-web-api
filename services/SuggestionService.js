@@ -17,7 +17,13 @@ const suggestCaravansByInterests = async (userId) => {
     let caravanSuggestions = rawCaravanSuggestions.filter(
       (caravan) => caravan.owner != userId
     );
-    return { result: caravanSuggestions, success: true };
+
+    // Filter joined Caravans
+    let finalCaravanSuggestion = caravanSuggestions.filter(
+      (caravan) => !caravan.nomads.includes(userId.toString())
+    );
+
+    return { result: finalCaravanSuggestion, success: true };
   } catch (error) {
     return { result: error, success: false };
   }
