@@ -15,6 +15,7 @@ const {
   confirmBondRequestController,
   removeBondRequestController,
   getTribeListController,
+  removeBondFromTribeController,
 } = require("../controllers/profile.controller");
 //#endregion
 
@@ -76,6 +77,7 @@ router.patch(
 );
 
 router.delete("/req/rm/:requestId", removeBondRequestController);
+router.delete("/bond/rm/:bondId/:userId", removeBondFromTribeController);
 
 //#endregion
 

@@ -56,11 +56,6 @@ const getTribeListController = async (req, res) => {
   }
 };
 
-/**
- * @description setup profile info after a successful sign-up
- * @param {Object} req HTTP request
- * @param {Object} res HTTP respone
- */
 const setUpProfileController = async (req, res) => {
   try {
     const result = await setupProfile(req.body);
@@ -197,6 +192,32 @@ const removeBondRequestController = async (req, res) => {
     });
   }
 };
+const removeBondFromTribeController = async (req, res) => {
+  try {
+    console.log("params in remove bond", req.params);
+    const { result, success } = await bonds.removeBondFromTribe(
+      req.params.userId,
+      req.params.bondId
+    );
+    if (!success)
+      return res.status(400).json({
+        result,
+        success,
+        msg: result,
+      });
+    return res.status(200).json({
+      result,
+      success,
+      msg: result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server erro while processing on bond requests actions",
+      result: error,
+      success: false,
+    });
+  }
+};
 
 module.exports = {
   getProfileByIdController,
@@ -207,4 +228,5 @@ module.exports = {
   placeBondRequestController,
   confirmBondRequestController,
   removeBondRequestController,
+  removeBondFromTribeController,
 };

@@ -87,7 +87,31 @@ const removeBondRequest = (requestId) => {
     .catch((err) => ({ result: err, success: false }));
 };
 
-const rejectBondRequest = () => {};
+const removeBondFromTribe = async (userId, bondId) => {
+  try {
+    console.log("Bond remove", { user: userId, bond: bondId });
+    let flag = true;
+    const isDeletedFromUser = await Nomad.findByIdAndUpdate(
+      userId,
+      { $pull: { tribe: bondId } },
+      { new: true }
+    );
+    if (!isDeletedFromUser) flag = false;
+
+    const isDeletedFromBond = await Nomad.findByIdAndUpdate(
+      bondId,
+      { $pull: { tribe: userId } },
+      { new: true }
+    );
+    if (!isDeletedFromBond) flag = false;
+
+    if (!flag) return { result: "couldn't remove the bond", success: flag };
+
+    return { result: "Romoved bond", success: flag };
+  } catch (error) {
+    return { result: error, success: false };
+  }
+};
 //#endregion
 
 //#region CARAVAN
@@ -394,7 +418,7 @@ module.exports = {
   placeBondRequest,
   removeBondRequest,
   confirmBondRequest,
-  rejectBondRequest,
+  removeBondFromTribe,
   createCaravan,
   getCaravanById,
   getCaravansByOwner,
