@@ -6,6 +6,7 @@ const {
   updateBalze,
   deleteBlaze,
   getJoinedBlazes,
+  getBlazesByLocation,
 } = require("../services/CommunityService");
 
 /**
@@ -64,7 +65,6 @@ const getJoinedBlazesController = async (req, res) => {
   }
 };
 
-// TODO: Get blaze by id
 const getBlazeByIdController = async (req, res) => {
   try {
     const blazeId = req.params.blazeId;
@@ -84,6 +84,31 @@ const getBlazeByIdController = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       msg: "Internal server error @getBlazesByCaravanController",
+      err: error,
+      success: false,
+    });
+  }
+};
+
+const getBlazesByLocationController = async (req, res) => {
+  try {
+    const locationId = req.params.locationId;
+    const { result, success } = await getBlazesByLocation(locationId);
+    if (!success) {
+      return res.status(400).json({
+        result,
+        success,
+        msg: "Something went wrong while fetching blazes by Location",
+      });
+    }
+    return res.status(200).json({
+      result,
+      success,
+      msg: "Blazes have been fetched successfully based on Location",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Internal server error @getBlazesByLocationController",
       err: error,
       success: false,
     });
@@ -115,9 +140,6 @@ const getBlazesByCaravanController = async (req, res) => {
   }
 };
 
-// TODO: Update a blaze
-const updateBlazeController = async (req, res) => {};
-
 const markAsGoingToBlazeController = async (req, res) => {
   try {
     const { blazeId, userId } = req.body;
@@ -143,6 +165,9 @@ const markAsGoingToBlazeController = async (req, res) => {
   }
 };
 
+// TODO: Update a blaze
+const updateBlazeController = async (req, res) => {};
+
 // TODO: Delete a blaze
 const deleteBlazeController = async (req, res) => {};
 
@@ -154,4 +179,5 @@ module.exports = {
   updateBlazeController,
   markAsGoingToBlazeController,
   deleteBlazeController,
+  getBlazesByLocationController,
 };

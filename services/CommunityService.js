@@ -363,16 +363,17 @@ const getBlazeById = async (balzeId) => {
   }
 };
 
-const getBlazesByCaravan = async (caravanId) => {
+const getBlazesByLocation = async (locationId) => {
   try {
-    const result = await Blaze.find({
-      caravan: caravanId,
-      date: { $gte: Date.now() },
-    })
+    const result = await Blaze.find({ location: locationId })
       .sort({ date: 1 })
       .populate({
         path: "participants",
         select: "first_name last_name prof_img",
+      })
+      .populate({
+        path: "caravan",
+        select: "caravan_name",
       })
       .populate("location");
 
@@ -385,8 +386,29 @@ const getBlazesByCaravan = async (caravanId) => {
   }
 };
 
-// TODO: Update a blaze
-const updateBalze = (ownerId, blazeId, payload) => {};
+const getBlazesByCaravan = async (caravanId) => {
+  try {
+    const result = await Blaze.find({
+      caravan: caravanId,
+      // date: { $gte: Date.now() },
+    })
+      .sort({ date: 1 })
+      .populate({
+        path: "participants",
+        select: "first_name last_name prof_img",
+      })
+      .populate("location");
+
+    if (!result)
+      throw new Error("Something went wrong while fetching blazes @service");
+
+    console.log("Is Blazes? ", result);
+
+    return { result, success: true };
+  } catch (error) {
+    return { result: error.message, success: false };
+  }
+};
 
 const markAsGoingToBlaze = async (userId, blazeId) => {
   try {
@@ -406,6 +428,9 @@ const markAsGoingToBlaze = async (userId, blazeId) => {
     return { result: error, success: false };
   }
 };
+
+// TODO: Update a blaze
+const updateBalze = (ownerId, blazeId, payload) => {};
 
 // TODO: Delete a blaze
 const deleteBlaze = (ownerId, blazeId) => {};
@@ -433,4 +458,5 @@ module.exports = {
   markAsGoingToBlaze,
   updateBalze,
   deleteBlaze,
+  getBlazesByLocation,
 };

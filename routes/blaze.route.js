@@ -14,6 +14,7 @@ const {
   updateBlazeController,
   markAsGoingToBlazeController,
   deleteBlazeController,
+  getBlazesByLocationController,
 } = require("../controllers/blaze.controller");
 //#endregion
 
@@ -25,6 +26,7 @@ router.post("/new", isSignedIn, isAuthenticated, createBlazeController);
 
 router.get("/j/:userId", isSignedIn, getJoinedBlazesController);
 router.get("/i/:blazeId", isSignedIn, getBlazeByIdController);
+router.get("/l/:locationId", isSignedIn, getBlazesByLocationController);
 router.get("/c/:caravanId", isSignedIn, getBlazesByCaravanController);
 
 router.put("/u/:blazeId", isSignedIn, isAuthenticated, updateBlazeController);
