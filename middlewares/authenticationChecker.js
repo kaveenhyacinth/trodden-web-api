@@ -19,7 +19,6 @@ const isAuthenticated = (req, res, next) => {
       msg: "Unauthorized Action",
     });
   }
-  console.log("Authorized user:", req.body.userId);
   next();
 };
 

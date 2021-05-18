@@ -19,7 +19,6 @@ const signupController = async (req, res) => {
 
   try {
     const { result, success } = await signup(req.body);
-    console.log("@SignupController", result); //<-- clg
     if (!success) {
       return res.status(400).json({
         result,
@@ -85,7 +84,6 @@ const signinController = async (req, res) => {
   try {
     const { result, success } = await signin(req.body);
     if (!success) return res.status(400).json({ result, success });
-    console.log("@SigninController", success); // <-- clg
 
     return res.status(200).json({
       result,

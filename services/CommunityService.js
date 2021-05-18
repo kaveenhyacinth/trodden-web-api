@@ -8,15 +8,12 @@ const { checkAndCreateDestination } = require("./ContentService");
 //#region BOND
 const getIncomingBondRequests = async (userId) => {
   try {
-    console.log("Inside Bonds");
     const result = await Bond.find({ requestee: userId }).populate({
       path: "owner",
       select: "first_name last_name prof_img",
     });
-    console.log(result);
     return { result, success: true };
   } catch (error) {
-    console.log("fatel errror", error);
     return { result: error, success: false };
   }
 };
@@ -89,7 +86,6 @@ const removeBondRequest = (requestId) => {
 
 const removeBondFromTribe = async (userId, bondId) => {
   try {
-    console.log("Bond remove", { user: userId, bond: bondId });
     let flag = true;
     const isDeletedFromUser = await Nomad.findByIdAndUpdate(
       userId,
@@ -121,7 +117,6 @@ const removeBondFromTribe = async (userId, bondId) => {
  * @param {ObjectId} caravanId
  */
 const getCaravanById = (caravanId) => {
-  console.log("inside get caravan by id");
   return Caravan.findById(caravanId)
     .populate({ path: "owner", select: "_id first_name last_name prof_img" })
     .populate({ path: "nomads", select: "_id first_name last_name prof_img" })
@@ -186,7 +181,6 @@ const createCaravan = (payload) => {
  * @param {Object} payload HTTP request body
  */
 const connectToCaravan = async (payload) => {
-  console.log("Inside Connect to caravan");
   try {
     const { userId, caravanId } = payload;
     const caravan = await Caravan.findById(caravanId);
@@ -201,13 +195,10 @@ const connectToCaravan = async (payload) => {
       { new: true }
     );
 
-    console.log("result at connect to caravan", updatedCaravan);
-
     return updatedCaravan === null
       ? { result: null, success: false }
       : { result: updatedCaravan, success: true };
   } catch (error) {
-    console.log("error at connect to caravan", error);
     return { result: error, success: false };
   }
 };
@@ -263,8 +254,6 @@ const deleteCaravan = (userId, caravanId) => {
 const createBlaze = async (payload) => {
   const { userId, caravanId, title, desc, date, location, filename } = payload;
 
-  console.log("Payload at blaze creation", payload);
-
   // check if caravan is owned by the ownerId
   try {
     const caravanOwner = await Caravan.findOne({
@@ -272,14 +261,10 @@ const createBlaze = async (payload) => {
       owner: userId,
     });
 
-    console.log("Caravan owner at blaze create", caravanOwner);
-
     // if not return
     if (!caravanOwner) throw new Error("Unauthorized Action");
 
     const des = location.id ? await checkAndCreateDestination(location) : null;
-
-    console.log("Destination id at blaze creation", des);
 
     // if so create the new blaze
     const blaze = new Blaze({
@@ -292,13 +277,9 @@ const createBlaze = async (payload) => {
       location: des,
     });
 
-    console.log("Blaze to save", blaze);
-
     const newBlaze = await blaze.save();
     if (!newBlaze)
       throw new Error("Something went wrong while saving blaze @service");
-
-    console.log("Blaze saves");
 
     const saveBlazeInCaravan = await Caravan.findByIdAndUpdate(
       caravanId,
@@ -306,11 +287,8 @@ const createBlaze = async (payload) => {
       { new: true }
     );
 
-    console.log("Blaze saved in caravan");
-
     return { result: newBlaze, success: true };
   } catch (error) {
-    console.log("Error at blaze creation", error);
     return { result: error.message, success: false };
   }
 };
@@ -328,8 +306,6 @@ const getJoinedBlazes = async (userId) => {
         select: "caravan_name",
       })
       .populate("location");
-
-    console.log("Joined Blazes", result);
 
     if (!result)
       throw new Error("Something went wrong while fetching blazes @service");
@@ -402,8 +378,6 @@ const getBlazesByCaravan = async (caravanId) => {
     if (!result)
       throw new Error("Something went wrong while fetching blazes @service");
 
-    console.log("Is Blazes? ", result);
-
     return { result, success: true };
   } catch (error) {
     return { result: error.message, success: false };
@@ -424,7 +398,6 @@ const markAsGoingToBlaze = async (userId, blazeId) => {
       ? { result: null, success: false }
       : { result: joinBlaze, success: true };
   } catch (error) {
-    console.log("error at join to blaze", error);
     return { result: error, success: false };
   }
 };

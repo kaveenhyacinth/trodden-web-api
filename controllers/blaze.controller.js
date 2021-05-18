@@ -19,7 +19,6 @@ const createBlazeController = async (req, res) => {
   try {
     const { result, success } = await createBlaze(req.body);
     if (!success) {
-      console.log("Error when create blaze", result);
       return res.status(400).json({
         result,
         success,

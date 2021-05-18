@@ -95,8 +95,6 @@ const suggestNomdsByInterests = async (userId) => {
       (item) => !omition.includes(item._id.toString())
     );
 
-    console.log("Final suggestion", nomadSuggestions); // <-clg
-
     return { result: nomadSuggestions, success: true };
   } catch (error) {
     return { result: error, success: false };

@@ -20,7 +20,6 @@ const getProfilebyId = async (userId) => {
     nomad.encry_password = undefined;
     nomad.salt = undefined;
 
-    console.log(nomad);
     return { result: nomad, success: true };
   } catch (error) {
     console.error("Error", error);

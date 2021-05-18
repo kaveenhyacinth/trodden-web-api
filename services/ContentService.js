@@ -18,25 +18,21 @@ const fetchFeed = async (userId) => {
     const tribeMemories = await Nomad.find({
       _id: { $in: nomad.tribe },
     }).select("memories -_id");
-    console.log("Tribe memos", tribeMemories);
 
     // Get geo city nomad memo ids
     const geoCityNomadMemoryIds = await Nomad.find({
       city: { $in: nomad.city },
     }).select("memories -_id");
-    console.log("Geo city nomad memos", geoCityNomadMemoryIds);
 
     // Get geo country nomad memo ids
     const geoCountryNomadMemoryIds = await Nomad.find({
       country: { $in: nomad.country },
     }).select("memories -_id");
-    console.log("Geo country nomad memos", geoCountryNomadMemoryIds);
 
     // Get interests nomad memo ids
     const interestsNomadMemoryIds = await Nomad.find({
       interests: { $in: nomad.interests },
     }).select("memories -_id");
-    console.log("Interests nomad memos", interestsNomadMemoryIds);
 
     // Push all memory ids into single array
     tribeMemories.forEach((element) => memoryIdArray.push(...element.memories));
@@ -196,8 +192,6 @@ const createMemo = async (payload) => {
       ? await checkAndCreateDestination(destination)
       : null;
 
-    console.log("Try media:", media);
-
     const memory = new Memory({
       owner: userId,
       content,
@@ -206,10 +200,7 @@ const createMemo = async (payload) => {
       media,
     });
 
-    console.log("Memory Body to save:", memory);
-
     const result = await memory.save();
-    console.log("Result:", result);
     if (!result) return { result, success: false };
 
     const saveMemoInNomad = await Nomad.findByIdAndUpdate(
@@ -368,7 +359,6 @@ const createTrip = async (payload) => {
 
 const getTripsByNomad = async (userId) => {
   try {
-    console.log("inside trips");
     const result = await Trip.find({ owner: userId })
       .sort({ startDate: -1 })
       .populate({

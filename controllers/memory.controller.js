@@ -48,7 +48,6 @@ const createMemoController = async (req, res) => {
   try {
     const { result, success } = await createMemo(req.body);
     if (!success) {
-      console.log("WTF!", result);
       return res.status(422).json({
         result,
         success,

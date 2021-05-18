@@ -89,7 +89,6 @@ const getIncomingBondRequestsController = async (req, res) => {
       msg: "Got incoming bond requests",
     });
   } catch (error) {
-    console.log("fatel error", error);
     return res.status(500).json({
       msg: "Internal server error while processing on bond requests actions",
       result: error,
@@ -196,7 +195,6 @@ const removeBondRequestController = async (req, res) => {
 
 const removeBondFromTribeController = async (req, res) => {
   try {
-    console.log("params in remove bond", req.params);
     const { result, success } = await bonds.removeBondFromTribe(
       req.params.userId,
       req.params.bondId
